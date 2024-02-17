@@ -1,0 +1,12 @@
+numpy
+PyYAML
+psycopg2
+postgis
+pymongo
+minio
+pyproj
+mmh3
+rasterio
+laspy
+laspy[lazrs,laszip]
+netCDF4

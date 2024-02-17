@@ -1,0 +1,48 @@
+CityGML:
+  productClass: 101
+  productType: CityGML
+  CRS: EPSG-4978
+3DTiles:
+  productClass: 102
+  productType: 3DTiles
+  CRS: EPSG-4978
+OSG:
+  productClass: 103
+  productType: OSG
+  CRS: EPSG-4978
+I3S:
+  productClass: 104
+  productType: I3S
+  CRS: EPSG-4978
+CityGML_Part:
+  productClass: 3011
+  productType: CityGML_Part
+  CRS: EPSG-4978
+3DTiles_Part:
+  productClass: 3021
+  productType: 3DTiles_Part
+  CRS: EPSG-4978
+OSG_Part:
+  productClass: 3031
+  productType: OSG_Part
+  CRS: EPSG-4978
+I3S_Part:
+  productClass: 3041
+  productType: I3S_Part
+  CRS: EPSG-4978
+RasterRelief:
+  productClass: 201
+  productType: RasterRelief
+  CRS: EPSG-4978
+PointCloud:
+  productClass: 202
+  productType: PointCloud
+  CRS: EPSG-4978
+PhysicalField:
+  productClass: 203
+  productType: PhysicalField
+  CRS: EPSG-4978
+3DMesh:
+  productClass: 204
+  productType: 3DMesh
+  CRS: EPSG-4978

@@ -1,0 +1,33 @@
+# postgresql:
+#   database: 3dsim
+#   user: postgres
+#   password: av8oI7qXoG
+#   host: 125.220.153.22
+#   port: 30366
+# mongodb:
+#   database: 3dsim
+#   host: 125.220.153.22
+#   port: 31075
+#   username: root
+#   password: WUL9FPQ2V9
+# minio:
+#   endpoint: 125.220.153.22:9006
+#   access_key: yudayu
+#   secret_key: ypfamily608
+
+postgresql:
+  database: 3dsim
+  user: postgres
+  password: wbw876653771@@
+  host: 10.211.55.6
+  port: 31074
+mongodb:
+  database: 3dsim
+  host: 10.211.55.6
+  port: 27017
+  username: admin
+  password: wbw876653771@@
+minio:
+  endpoint: 10.211.55.6:9000
+  access_key: admin
+  secret_key: wbw876653771@@
