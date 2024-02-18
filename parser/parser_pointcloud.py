@@ -14,7 +14,7 @@ class ParserPointcloud(ThreeDSIMBase):
         self._mimeType = '' 
         self._uri = ''
 
-    # parse apoint cloud asset instance file and insert it into 3dsim
+    # parse a point cloud asset instance file and insert it into 3dsim
     def add_data(self, mimeType: str,  path:str, 
                  createTime: str='', validTime: list[str]=['',''])->None:
         self._createTime = createTime

@@ -25,7 +25,7 @@ class ParserRelief(ThreeDSIMBase):
         self._mimeType = '' 
         self._uri = ''
 
-    # parse a3d relief asset instance file and insert it into 3dsim
+    # parse a 3d relief asset instance file and insert it into 3dsim
     def add_data(self, mimeType: str,  path:str, 
                  createTime: str='', validTime: list[str]=['',''])->None:
         self._createTime = createTime
@@ -87,7 +87,7 @@ class ParserRelief(ThreeDSIMBase):
             asset.update(res)
             asset.update(bv)
     
-    # compute the identifier atrribute of the tile
+    # compute the identifier atrribute of the relief
     def _compute_identifier_value(self)->dict:
         return {
             "_id": ThreeDSIMBase.mongodb_client.getObjectId()

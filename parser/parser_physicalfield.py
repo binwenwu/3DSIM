@@ -27,7 +27,7 @@ class ParserPhysicalField(ThreeDSIMBase):
         self._mimeType = '' 
         self._uri = ''
 
-    # parse a3d physical field asset instance file and insert it into 3dsim
+    # parse a 3d physical field asset instance file and insert it into 3dsim
     def add_data(self, mimeType: str,  path:str, 
                  createTime: str='', validTime: list[str]=['',''])->None:
         self._createTime = createTime

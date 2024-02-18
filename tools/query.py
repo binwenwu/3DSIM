@@ -218,3 +218,44 @@ class Query(ThreeDSIMBase):
 
         view_point_levels = [str(row[0]) for row in result]
         return view_point_levels
+    
+    # TODO 还未经过测试
+    def query_dimension(self, product: list[str]=['3DTiles','CityGML','OSG', 'I3S'], 
+                             spatialExtent: list[float] = [-180, -90, 180, 90],
+                             timeSpan: list[str] = ['19000101', '20990101'], 
+                             feature: list[str] = ['Building'], viewedRange: list[float] = [0,9999999]):
+        """
+        Query the dimension value
+        :param product: product name list,
+          such as 3DTiles, CityGML, OSG, I3S;
+        :param spatialExtent: minX, minY, maxX, maxY
+        :param timeSpan: minT, maxT
+        :param feature: feature name list
+        :param viewedRange: minRange, MaxRange (Distance from center of object)
+        """
+        if not spatialExtent or not timeSpan or not feature or not viewedRange or not product:
+            raise ValueError("spatialExtent, timeSpan, feature, viewedRange are all required.")
+        pro_id = self._query_productDim(product)       
+        list_time = self._query_timeDim(timeSpan)
+        list_feature = self._query_featureDim(feature)
+        list_viewpoint = self._query_viewPointDim(viewedRange)
+        list_spatial = self._query_spatialDim(spatialExtent)
+
+        if not pro_id:
+            raise ValueError("product list is none.")
+        filtered_pro_id = [item for item in pro_id if item.startswith('1')]
+        
+        query = {
+            "productDimension": {"$in": filtered_pro_id},
+            "featureDimension": {"$in": list_feature},
+            "viewpointDimension": {"$in": list_viewpoint},
+            "timeDimension": {"$in": list_time},
+            "spatialDimension":  {"$in": list_spatial}
+        }
+
+        result_scene = ThreeDSIMBase.mongodb_client.search_documents("3DSceneFact", query)
+        result_model = ThreeDSIMBase.mongodb_client.search_documents("3DModelFact", query)
+        return {
+            "scene": result_scene,
+            "model": result_model
+        }

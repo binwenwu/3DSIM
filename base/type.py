@@ -33,6 +33,11 @@ class PhysicalFieldType(Enum):
     NETCDF = "NETCDF"
     HDF = "HDF"
 
+class Mesh3DType(Enum):
+    GLTF = "GLTF"
+    GLB = "PLY"
+    FBX = "FBX"
+
 class Transform:
     def __init__(self, matrix: np.ndarray):
         if matrix is not None and matrix.shape != (4, 4):

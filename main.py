@@ -9,12 +9,8 @@ import time
 
 def main():
 
-    # script_path = os.path.abspath(__file__)
-    # script_directory = os.path.dirname(script_path)
-
-        #     result = query.query_dimension(product=['3DTiles', 'OSG'])
-        # query.query_dimension(product=['3DTiles', 'OSG'], feature=['Building'], viewedRange=[123,52322],
-        #                      timeSpan=['19990101', '20010101'], spatialExtent=[0,0,180,180])
+    # script_path = os.path.abspath(__file__) # 获取当前脚本的绝对路径
+    # script_directory = os.path.dirname(script_path) # 获取当前脚本的所在目录名
 
     pid = os.getpid() # 获取当前进程的进程ID（Process ID）
     available_cores = [i for i in range(os.cpu_count()) if i != 0] # 获取除了第一个CPU核心外的所有CPU核心编号
@@ -24,7 +20,8 @@ def main():
     # 2 for query 3d tiles
     # 3 for add raster relief
     # 4 for add physical field
-    mode = 4
+    # 5 for add point cloud
+    mode = 6
     if mode == 1:
         p3d = Parser3DTiles()
         testPath = "/home/program/3dsim/data/3dtiles/DA16_3D_Buildings/tileset.json"
