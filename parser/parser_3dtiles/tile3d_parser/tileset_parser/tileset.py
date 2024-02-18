@@ -99,6 +99,7 @@ class TileSet(RootProperty[TilesetDictType]):
 
         tileset = TileSet.from_dict(tileset_dict, tileset_path)
 
+        # 获取tileset.json文件所在目录的路径
         tileset.root_uri = tileset_path.parent
 
         return tileset

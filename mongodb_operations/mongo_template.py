@@ -118,7 +118,7 @@ template_model_asset_physicalfield = {
 
 template_asset_edge = {
     "fromID": "", # the identier id of father asset
-    "toID": "", # the identier id of father asset
+    "toID": "", # the identier id of child asset
     "type": "", # 1:scene 2 scene; 2: scene 2 model
     "transform": [], # For node reference: 16 flost for Matrix 4*4
     "range": {} # for lod render range：{renderRange: "", rangeMode: ""}

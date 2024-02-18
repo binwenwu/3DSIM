@@ -72,7 +72,8 @@ class RootProperty(ABC, Generic[_JsonDictT]):
     ) -> None:
         if "metadata" in dict_data:
             self.metadata = dict_data["metadata"]
-            # self.metadata = BaseMetadata.from_dict(dict_data["metadata"])
+
+            # self.metadata = BaseMetadata.from_dict(dict_data["metadata"])  TODO 问什么这里不用这种方式了
             # data = json.loads(dict_data["metadata"])
             '''
             如果filePath不为空, 那么就将文件名修改为metadata.json, 并将dict_data["metadata"]写入文件

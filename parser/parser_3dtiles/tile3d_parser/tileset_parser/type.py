@@ -1,26 +1,3 @@
-"""
-@author:wbw
-@description: 该模块定义了在 tileset_parser 模块中解析三维瓦片集合的数据类型.
-
-- `ExtraDictType`：包含拓展属性的字典。
-- `MetaDataType`：包含有关瓦片集的元数据的字典。
-- `GeometricErrorType`：表示瓦片的几何误差的浮点数。
-- `PropertyType`：包含瓦片属性的字典。
-- `RefineType`：表示应用于瓦片的细化类型的字符串字面量。
-- `TransformDictType`：表示 4x4 矩阵变换的 16 个浮点数列表。
-
-- `RootPropertyDictType`：包含瓦片集根级别属性的字典。
-- `BoundingVolumeBoxDictType`：包含瓦片集边界框的字典。
-- `BoundingVolumeRegionDictType`：包含瓦片集边界区域的字典。
-- `BoundingVolumeSphereDictType`：包含瓦片集边界球的字典。
-- `BoundingVolumeDictType`：三种边界体类型的基类。
-- `ContentType`：包含瓦片内容属性的字典。
-- `ContentsType`：包含瓦片内容列表的字典。
-- `PropertyDictType`：包含瓦片属性的字典。
-- `AssetDictType`：包含瓦片集资产属性的字典。
-- `TileDictType`：包含瓦片属性的字典。
-- `TilesetDictType`：包含瓦片集属性的字典。
-"""
 from __future__ import annotations
 
 
@@ -61,10 +38,22 @@ RefineType = Literal["ADD", "REPLACE"]
 TransformDictType = List[float]
 
 
+# 描述3DTiles内容的基类
 class RootPropertyDictType(TypedDict):
     metadata: NotRequired[MetaDataType]
     extensions: NotRequired[ExtensionDictType]
     extras: NotRequired[ExtraDictType]
+
+
+# tileset.json的字典类型
+class TilesetDictType(RootPropertyDictType):
+    asset: AssetDictType
+    properties: PropertyDictType
+    geometricError: GeometricErrorType
+    root: TileDictType
+    extensionsUsed: NotRequired[list[str]]
+    extensionsRequired: NotRequired[list[str]]
+
 
 
 class BoundingVolumeBoxDictType(RootPropertyDictType):
@@ -74,14 +63,10 @@ class BoundingVolumeBoxDictType(RootPropertyDictType):
 class BoundingVolumeRegionDictType(RootPropertyDictType):
     region: list[float]
 
-
 class BoundingVolumeSphereDictType(RootPropertyDictType):
     sphere: list[float]
 
-
-
-# @author:wbw
-# 表示一个瓦片集的边界体的字典类型，可以是一个边界框、边界区域或边界球中的任意一种
+# tileset.json中boundingVolume属性的字典类型
 BoundingVolumeDictType = Union[
     BoundingVolumeBoxDictType,
     BoundingVolumeRegionDictType,
@@ -89,7 +74,7 @@ BoundingVolumeDictType = Union[
 ]
 
 
-# @author:wbw
+# tileset.json中content属性的字典类型
 class ContentType(RootPropertyDictType):
     boundingVolume: NotRequired[BoundingVolumeDictType]
     transform: NotRequired[TransformDictType]
@@ -97,27 +82,26 @@ class ContentType(RootPropertyDictType):
 
 
 
-# @author:wbw
+# tileset.json中contents属性的字典类型
 class ContentsType(RootPropertyDictType):
     content: list[ContentType]
 
 
-# @author:wbw
-# 这个类的作用是什么？
+# tileset.json中properties根属性的字典类型
 class PropertyDictType:
-    maximum: float
-    minimum: float
+    # TODO 这个还没同步到输出的tileset.json中
+    Height: PropertyType
+    Latitude: PropertyType
+    Longitude: PropertyType
 
 
-# @author:wbw
-# 表示瓦片集的资产属性
+# tileset.json中asset根属性的字典类型
 class AssetDictType(RootPropertyDictType):
     version: Literal["1.0", "1.1"]
     tilesetVersion: NotRequired[str]
 
 
-# @author:wbw
-# 表示一个瓦片的属性
+# tileset.json中一个tile的字典类型
 class TileDictType(RootPropertyDictType):
     boundingVolume: BoundingVolumeDictType
     geometricError: GeometricErrorType
@@ -128,14 +112,6 @@ class TileDictType(RootPropertyDictType):
     children: NotRequired[list[TileDictType]]
 
 
-# @author:wbw
-# 表示一个瓦片集的属性
-# root 是干嘛的？
-class TilesetDictType(RootPropertyDictType):
-    asset: AssetDictType
-    properties: PropertyDictType
-    geometricError: GeometricErrorType
-    root: TileDictType
-    extensionsUsed: NotRequired[list[str]]
-    extensionsRequired: NotRequired[list[str]]
+
+
 

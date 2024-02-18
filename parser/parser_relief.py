@@ -52,7 +52,7 @@ class ParserRelief(ThreeDSIMBase):
         
         ThreeDSIMBase.mongodb_client.add_document("3DModelFact",reliefAsset)
         print(reliefAsset)
-        pass
+
 
     def _read_geotiff(self, asset: dict)->None:
         with rasterio.open(self._uri) as src:

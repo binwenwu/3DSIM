@@ -19,7 +19,7 @@ from .tile3d_parser.tileset_parser.contents import Contents
 
 from tools.utils import generate_short_hash
 from minio_operations.minio import get_endpoint_minio
-
+from typing import Union
 class Parser3DTiles(ThreeDSIMBase):
     def __init__(self)-> None:
         super().__init__()
@@ -387,7 +387,7 @@ class Parser3DTiles(ThreeDSIMBase):
             time = '20230105'  # TODO
         return {"timeDimension": time}
     
-    def _compute_bounding_volume(self, tile: Tile or Content)->dict:
+    def _compute_bounding_volume(self, tile: Union[Tile, Content])->dict:
         if tile.bounding_volume is not None:
             boundingVolumeType = list(tile.bounding_volume.to_dict().keys())[0]
             boundingVolume = list(tile.bounding_volume.to_dict().values())[0] 
@@ -402,13 +402,14 @@ class Parser3DTiles(ThreeDSIMBase):
         else:
             return {}
     
-    def _compute_transform_value(self, tile: Tile or Content)->dict:
+    def _compute_transform_value(self, tile: Union[Tile, Content])->dict:
         if tile.transform is not None:
             return Transform(tile.transform).to_dict()
         else:
             return {"transform": []}
         
-    def _compute_transform_toWorld_value(self, tile: Tile or Content)->dict:
+    def _compute_transform_toWorld_value(self, tile: Union[Tile, Content])->dict:
+        # TODO
         # all of the tileset have been transformed to the world coordinate system
         return {"transformToWorld": []}
         
@@ -432,7 +433,7 @@ class Parser3DTiles(ThreeDSIMBase):
         if isRoot:
             genericName = parent_folder+"_"+self._featureType #order: filePath -> name in metadata
             if self._check_dict_field(adeOfMetadata, 'feature'):
-                pass  # TODO
+                pass  # TODO 是不是要用数据自带的feature字段替代用户输出的featureType？
             return {
                 "genericName": genericName
             }
@@ -467,7 +468,7 @@ class Parser3DTiles(ThreeDSIMBase):
         }
     
     # compute the adeOfMetadata value of the tile
-    def _compute_adeOfMetadata_value_for_tile(self, tile: Tile, is_root: bool=False)->dict:
+    def _compute_adeOfMetadata_value_for_tile(self, tile: Tile)->dict:
         adeOfMetadata = {}
         # TODO: parser meatadata of each tile
         return adeOfMetadata
