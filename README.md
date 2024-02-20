@@ -15,13 +15,13 @@
 │   ├── mogon_counter.py
 │   ├── mongodb.py
 │   ├── mongo_template.py
-├── rmdb_operations                                       PostGIS operation
+├── rmdb_operations                                      PostGIS operation
 │   ├── initialize_dimension_tables.py
 │   ├── __init__.py
 │   ├── postgres.py
 │   ├── sql_commonds.py
 │   └── tableparams.py
-├── parser                                                Various data analysis
+├── parser                                               Various data analysis
 │   ├── model_parser.py
 │   ├── parser_3dmesh.py
 │   ├── parser_3dtiles
@@ -47,8 +47,8 @@
 │   ├── parser_physicalfield.py
 │   ├── parser_pointcloud.py
 │   ├── parser_relief.py
-├── requirements.txt                                      Dependency Package
-├── tools                                                 Instrumental function
+├── requirements.txt                                     Dependency Package
+├── tools                                                Instrumental function
 │   ├── query.py
 │   ├── render_range_convert.py
 │   └── utils.py
