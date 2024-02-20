@@ -33,11 +33,7 @@ def main():
         print("size of root scene: ", len(result))
         # print(result[ix])
         p3d = Parser3DTiles()
-        start_time = time.time()
         p3d.save_data_to3dtiles(sceneAsset=result[ix], path='./query_tileset.json',query=query)
-        end_time = time.time()
-        execution_time_ms = (end_time - start_time) * 1000
-        print(f"代码执行时间：{execution_time_ms:.2f}毫秒")
     if mode == 3:
         pr = ParserRelief()
         testPath = "/home/program/3dsim/data/rasterrelief/DTM_e36n31_TINRelief_4326.tif"
@@ -53,4 +49,8 @@ def main():
     pass
 
 if __name__ == "__main__":
+    start_time = time.time()
     main()
+    end_time = time.time()
+    execution_time_ms = (end_time - start_time) * 1000
+    print(f"代码执行时间：{execution_time_ms:.2f}毫秒")
