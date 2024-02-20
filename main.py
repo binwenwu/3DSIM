@@ -9,9 +9,6 @@ import time
 
 def main():
 
-    # script_path = os.path.abspath(__file__) # 获取当前脚本的绝对路径
-    # script_directory = os.path.dirname(script_path) # 获取当前脚本的所在目录名
-
     pid = os.getpid() # 获取当前进程的进程ID（Process ID）
     available_cores = [i for i in range(os.cpu_count()) if i != 0] # 获取除了第一个CPU核心外的所有CPU核心编号
     os.sched_setaffinity(pid, available_cores) # 设置进程的CPU亲和性, 将进程绑定到除了第一个核心以外的所有可用核心, 以实现多核并行处理
@@ -31,7 +28,6 @@ def main():
         query  = Query()
         result = query.query_rootSceneAsset()
         print("size of root scene: ", len(result))
-        # print(result[ix])
         p3d = Parser3DTiles()
         p3d.save_data_to3dtiles(sceneAsset=result[ix], path='./query_tileset.json',query=query)
     if mode == 3:

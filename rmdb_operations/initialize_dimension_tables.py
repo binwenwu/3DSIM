@@ -181,7 +181,7 @@ class FeatureDimInitializer:
         self.postgresql = postgresql
 
     def do_initialize(self):
-        file_path = os.path.join(os.getcwd(), "feature_category.yaml")
+        file_path = os.path.join(os.getcwd(), "config/feature_category.yaml")
         with open(file_path, 'r') as file:
             feature_data = yaml.safe_load(file)
 
@@ -205,7 +205,7 @@ class ProductDimInitializer:
         self.postgresql = postgresql
 
     def do_initialize(self):
-        file_path = os.path.join(os.getcwd(), "product_category.yaml")
+        file_path = os.path.join(os.getcwd(), "config/product_category.yaml")
         with open(file_path, 'r') as file:
             product_data = yaml.safe_load(file)
 

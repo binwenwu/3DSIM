@@ -4,11 +4,7 @@ from abc import ABC, abstractmethod
 from .type import ExtensionDictType
 
 
-"""
-@author:wbw
 
-拓展类，服务于拓展属性这个类
-"""
 class BaseExtension():
     """
     A base class to manage 3dtiles extension.
@@ -31,14 +27,13 @@ class BaseExtension():
         self.validTo = validTo
 
    
-    @classmethod # 在Python中，cls是一个约定俗成的命名，用于表示类本身，该方法的作用是从字典创建一个新的拓展对象
+    @classmethod
     def from_dict(cls, extension_dict: ExtensionDictType) -> BaseExtension:
 
         if "name" in extension_dict:
             name = extension_dict["name"]
         
-        # @author:wbw
-        # 从字典创建一个新的拓展对象
+        # Create a new extension object from the dictionary
         extensions = cls(name=name)
         if "identifier" in extension_dict:
             extensions.identifier = extension_dict["identifier"]
@@ -55,7 +50,7 @@ class BaseExtension():
         return extensions
 
 
-    # 将拓展对象转换为字典
+    # Convert extended objects to dictionaries
     def to_dict(self) -> ExtensionDictType:
         dict_data: ExtensionDictType = {}
         if self.name:

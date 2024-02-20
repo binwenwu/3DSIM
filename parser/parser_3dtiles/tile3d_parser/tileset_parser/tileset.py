@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 #*****************************************
-#   Asset类，关于tileset的asset属性的操作
+#   Related operations on asset
 #*****************************************
 class Asset(RootProperty[AssetDictType]):
     def __init__(
@@ -24,7 +24,7 @@ class Asset(RootProperty[AssetDictType]):
         self.adeOfMetadata = metadataUri
 
     @classmethod
-    # 从字典中读取asset属性信息
+    # Read asset attribute information from the dictionary
     def from_dict(cls, asset_dict: AssetDictType, metadataPath: Path | None = None) -> Self:
         asset = cls(asset_dict["version"])
         if "tilesetVersion" in asset_dict:
@@ -37,7 +37,7 @@ class Asset(RootProperty[AssetDictType]):
 
         return asset
     
-    # 将asset属性信息转为字典形式
+    # Convert asset attribute information into dictionary form
     def to_dict(self) -> AssetDictType:
         asset_dict: AssetDictType = {"version": self.version}
 
@@ -49,7 +49,7 @@ class Asset(RootProperty[AssetDictType]):
         return asset_dict
 
 #****************************************
-#   关于tileset的相关操作
+#   Related operations on tileset
 #****************************************
 class TileSet(RootProperty[TilesetDictType]):
     def __init__(
@@ -68,7 +68,7 @@ class TileSet(RootProperty[TilesetDictType]):
         self.adeOfMetadata = metadataUri
 
     @classmethod
-    # 从字典中读取tileset相关属性
+    # Read tileset related properties from the dictionary
     def from_dict(cls, tileset_dict: TilesetDictType, metadataPath: Path | None = None) -> Self:
         tileset = cls()
         if "geometricError" in tileset_dict:
@@ -81,6 +81,7 @@ class TileSet(RootProperty[TilesetDictType]):
         
         if "root" in tileset_dict:
             tileset.root_tile = Tile.from_dict(tileset_dict["root"], metadataPath)
+        
         tileset.set_properties_from_dict(tileset_dict, metadataPath)
 
         if "extensionsUsed" in tileset_dict:

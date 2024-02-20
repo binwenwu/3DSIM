@@ -8,7 +8,7 @@ import yaml
 
 
 def get_endpoint_minio() -> str:
-    config_file = os.path.join(os.getcwd(), "config.yaml")
+    config_file = os.path.join(os.getcwd(), "config/config.yaml")
     with open(config_file, "r") as file:
         config = yaml.safe_load(file)
 

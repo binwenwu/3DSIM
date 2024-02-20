@@ -13,7 +13,7 @@ class ThreeDSIMBase(ABC):
 
     def __init__(self, config_file: str = None):
         if config_file is None:
-            config_file = os.path.join(os.getcwd(), "config.yaml")
+            config_file = os.path.join(os.getcwd(), "config/config.yaml")
         self._connect_databases(config_file)
 
     def _connect_databases(self, config_file: str):

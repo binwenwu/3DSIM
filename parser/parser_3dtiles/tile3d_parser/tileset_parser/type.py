@@ -1,22 +1,27 @@
 from __future__ import annotations
-
+import numpy as np
+import numpy.typing as npt
+from pyproj import CRS
 
 """
-@author:wbw
-- `Any`：表示任意类型。
-- `Dict`：表示字典类型，其中键为字符串，值为任意类型。
-- `List`：表示列表类型，其中元素为任意类型。
-- `Literal`：表示字面量类型，用于指定一个固定的值。
-- `TYPE_CHECKING`：一个常量，用于在类型注解中进行条件导入。
-- `TypedDict`：表示字典类型，其中键和值都有指定的类型。
-- `Union`：表示联合类型，其中至少有一个类型匹配。
+TYPE_CHECKING：用于在类型注解中检查类型的特殊常量。
+Any：表示任意类型。
+Dict：表示字典类型，接受两个类型参数，分别表示键和值的类型。
+List：表示列表类型，接受一个类型参数，表示列表元素的类型。
+Literal：表示字面值类型，接受一个或多个字面值作为参数。
+Optional：表示可选类型，可以为指定类型或 None。
+Tuple：表示元组类型，接受一个或多个类型参数，表示元组中每个位置的类型。
+TypedDict：表示有类型的字典类型，用于定义带有特定字段和类型的字典。
+Union：表示联合类型，接受两个或多个类型参数，表示可以是其中任意一个类型
 """
 from typing import (
+    TYPE_CHECKING,
     Any,
     Dict,
     List,
     Literal,
-    TYPE_CHECKING,
+    Optional,
+    Tuple,
     TypedDict,
     Union,
 )
@@ -29,30 +34,20 @@ if TYPE_CHECKING:
     from typing_extensions import NotRequired
 
 # Tileset types
+MetaDataType = Dict[str, Any]
 ExtensionDictType = Dict[str, Any]
 ExtraDictType = Dict[str, Any]
-MetaDataType = Dict[str, Any]
 GeometricErrorType = float
 PropertyType = Dict[str, Any]
 RefineType = Literal["ADD", "REPLACE"]
 TransformDictType = List[float]
 
 
-# 描述3DTiles内容的基类
+
 class RootPropertyDictType(TypedDict):
     metadata: NotRequired[MetaDataType]
     extensions: NotRequired[ExtensionDictType]
     extras: NotRequired[ExtraDictType]
-
-
-# tileset.json的字典类型
-class TilesetDictType(RootPropertyDictType):
-    asset: AssetDictType
-    properties: PropertyDictType
-    geometricError: GeometricErrorType
-    root: TileDictType
-    extensionsUsed: NotRequired[list[str]]
-    extensionsRequired: NotRequired[list[str]]
 
 
 
@@ -66,7 +61,7 @@ class BoundingVolumeRegionDictType(RootPropertyDictType):
 class BoundingVolumeSphereDictType(RootPropertyDictType):
     sphere: list[float]
 
-# tileset.json中boundingVolume属性的字典类型
+
 BoundingVolumeDictType = Union[
     BoundingVolumeBoxDictType,
     BoundingVolumeRegionDictType,
@@ -74,7 +69,6 @@ BoundingVolumeDictType = Union[
 ]
 
 
-# tileset.json中content属性的字典类型
 class ContentType(RootPropertyDictType):
     boundingVolume: NotRequired[BoundingVolumeDictType]
     transform: NotRequired[TransformDictType]
@@ -82,12 +76,12 @@ class ContentType(RootPropertyDictType):
 
 
 
-# tileset.json中contents属性的字典类型
+
 class ContentsType(RootPropertyDictType):
     content: list[ContentType]
 
 
-# tileset.json中properties根属性的字典类型
+
 class PropertyDictType:
     # TODO 这个还没同步到输出的tileset.json中
     Height: PropertyType
@@ -95,13 +89,13 @@ class PropertyDictType:
     Longitude: PropertyType
 
 
-# tileset.json中asset根属性的字典类型
+
 class AssetDictType(RootPropertyDictType):
     version: Literal["1.0", "1.1"]
     tilesetVersion: NotRequired[str]
 
 
-# tileset.json中一个tile的字典类型
+
 class TileDictType(RootPropertyDictType):
     boundingVolume: BoundingVolumeDictType
     geometricError: GeometricErrorType
@@ -111,6 +105,62 @@ class TileDictType(RootPropertyDictType):
     content: NotRequired[ContentType]
     children: NotRequired[list[TileDictType]]
 
+
+class TilesetDictType(RootPropertyDictType):
+    asset: AssetDictType
+    geometricError: GeometricErrorType
+    root: TileDictType
+    properties: PropertyDictType
+    extensionsUsed: NotRequired[list[str]]
+    extensionsRequired: NotRequired[list[str]]
+
+
+
+# TODO 以下参考py3dtiles
+# BatchTableDictType = Dict[str, Any]
+
+# # Tile content types
+
+# BatchTableHeaderDataType = Dict[str, Union[List[Any], Dict[str, Any]]]
+
+# FeatureTableHeaderDataType = Dict[
+#     str,
+#     Union[
+#         int,  # points_length
+#         Dict[str, int],  # byte offsets
+#         Tuple[float, float, float],  # rtc
+#         List[float],  # quantized_volume_offset and quantized_volume_scale
+#         Tuple[int, int, int, int],  # constant_rgba
+#     ],
+# ]
+
+
+# class HierarchyClassDictType(TypedDict):
+#     name: str
+#     length: int
+#     instances: dict[str, list[Any]]
+
+
+# # Tiler types
+
+# PortionItemType = Tuple[int, ...]
+# PortionsType = List[Tuple[str, PortionItemType]]
+
+
+# class MetadataReaderType(TypedDict):
+#     portions: PortionsType
+#     aabb: npt.NDArray[np.float64]
+#     crs_in: CRS | None
+#     point_count: int
+#     avg_min: npt.NDArray[np.float64]
+
+
+# OffsetScaleType = Tuple[
+#     npt.NDArray[np.float64],
+#     npt.NDArray[np.float64],
+#     Optional[npt.NDArray[np.float64]],
+#     Optional[float],
+# ]
 
 
 
