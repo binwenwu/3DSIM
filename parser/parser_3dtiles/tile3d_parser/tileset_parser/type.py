@@ -3,17 +3,7 @@ import numpy as np
 import numpy.typing as npt
 from pyproj import CRS
 
-"""
-TYPE_CHECKING：用于在类型注解中检查类型的特殊常量。
-Any：表示任意类型。
-Dict：表示字典类型，接受两个类型参数，分别表示键和值的类型。
-List：表示列表类型，接受一个类型参数，表示列表元素的类型。
-Literal：表示字面值类型，接受一个或多个字面值作为参数。
-Optional：表示可选类型，可以为指定类型或 None。
-Tuple：表示元组类型，接受一个或多个类型参数，表示元组中每个位置的类型。
-TypedDict：表示有类型的字典类型，用于定义带有特定字段和类型的字典。
-Union：表示联合类型，接受两个或多个类型参数，表示可以是其中任意一个类型
-"""
+
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -26,9 +16,6 @@ from typing import (
     Union,
 )
 
-
-# @author:wbw
-# NotRequired 类型是一个自定义类型，它表示一个可选的值，可以是任何类型或 None。它通常用于类型注解中, 表示一个参数或返回值是可选的。
 
 if TYPE_CHECKING:
     from typing_extensions import NotRequired
@@ -83,10 +70,8 @@ class ContentsType(RootPropertyDictType):
 
 
 class PropertyDictType:
-    # TODO 这个还没同步到输出的tileset.json中
-    Height: PropertyType
-    Latitude: PropertyType
-    Longitude: PropertyType
+    maximum: float
+    minimum: float
 
 
 

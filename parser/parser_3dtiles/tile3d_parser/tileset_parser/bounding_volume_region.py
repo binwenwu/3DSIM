@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import numpy.typing as npt
@@ -10,13 +10,19 @@ from .bounding_volume import BoundingVolume
 
 if TYPE_CHECKING:
     from typing_extensions import Self
+    from .tile import Tile
 
 np.set_printoptions(linewidth=500)
 
-#****************************************
-#   关于boundingVolume中Region类型的操作
-#****************************************
+#*******************************************************
+#   About the Operation of Region Type in BoundingVolume
+#*******************************************************
 class BoundingVolumeRegion(BoundingVolume[BoundingVolumeRegionDictType]):
+    """
+    The boundingVolume. region property is an array of six numbers 
+    that define boundary geographic regions using latitude, longitude, and height coordinates, 
+    in the order of [west, south, east, north, minimum height, maximum height]
+    """
 
     def __init__(self) -> None:
         super().__init__()
@@ -32,7 +38,27 @@ class BoundingVolumeRegion(BoundingVolume[BoundingVolumeRegionDictType]):
 
         return bounding_volume_region
     
-    # 判断boundingVoume的类型是否为region
+
+    def get_center(self) -> npt.NDArray[np.float64]:
+        pass
+    
+
+    def translate(self, offset: npt.NDArray[np.float64]) -> None:
+        pass
+
+
+    def transform(self, transform: npt.NDArray[np.float64]) -> None:
+        pass
+
+
+    def add(self, other: BoundingVolume[Any]) -> None:
+        pass
+
+
+    def sync_with_children(self, owner: Tile) -> None:
+        pass
+
+
     def is_region(self) -> bool:
         return True
 

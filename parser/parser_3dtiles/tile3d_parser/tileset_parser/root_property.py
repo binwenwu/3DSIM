@@ -12,23 +12,13 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-# @author:wbw
-# 定义泛型类型，并指定其上限为RootPropertyDictType，即该泛型类型变量必须是RootPropertyDictType类型或其子类
+
 _JsonDictT = TypeVar("_JsonDictT", bound = RootPropertyDictType)
 
-#**********************************
-#   抽象类，关于一些扩展属性的操作
-#**********************************
+#*****************************************
+#   operations on some extended properties
+#*****************************************
 
-"""
-@author:wbw
-
-这段代码定义了一个名为 `RootProperty` 的 Python 类, 该类是一个抽象类(Abstract Class), 
-继承自 `ABC` 类,同时使用了泛型(Generic)类型 `_JsonDictT`。泛型类型 `_JsonDictT` 表示一个字典类型，
-用于表示 JSON 数据。在这个类中，使用泛型类型可以使代码更加通用和灵活，可以在子类中指定具体的字典类型。
-
-ABC是一个元类, 用于创建抽象基类。抽象基类不能实例化, 只能被继承。抽象基类的主要作用是强制子类实现特定的方法。
-"""
 class RootProperty(ABC, Generic[_JsonDictT]):
 
     def __init__(self,
@@ -72,12 +62,7 @@ class RootProperty(ABC, Generic[_JsonDictT]):
     ) -> None:
         if "metadata" in dict_data:
             self.metadata = dict_data["metadata"]
-
-            # self.metadata = BaseMetadata.from_dict(dict_data["metadata"])  TODO 问什么这里不用这种方式了
-            # data = json.loads(dict_data["metadata"])
-            '''
-            如果filePath不为空, 那么就将文件名修改为metadata.json, 并将dict_data["metadata"]写入文件
-            '''
+            # If filePath is not empty, then change the file name to metadata.json and write dict_data ["metadata"] to the file
             if filePath is not None:
                 filePath = filePath.with_name("metadata.json")
                 with open(filePath,"a") as f:

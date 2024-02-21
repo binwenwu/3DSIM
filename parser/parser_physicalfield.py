@@ -73,7 +73,7 @@ class ParserPhysicalField(ThreeDSIMBase):
         resolution_x, resolution_y = abs(float(lon[1]-lon[0])), abs(float(lat[1]-lat[0]))
 
 
-        zmin = np.mix(nc_dataset['level'][:]).item()
+        zmin = np.min(nc_dataset['level'][:]).item()
         zmax = np.max(nc_dataset['level'][:]).item()
 
         # 关闭文件

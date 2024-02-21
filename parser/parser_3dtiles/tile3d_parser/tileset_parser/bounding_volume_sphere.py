@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import numpy.typing as npt
@@ -10,20 +10,24 @@ from .bounding_volume import BoundingVolume
 
 if TYPE_CHECKING:
     from typing_extensions import Self
+    from .tile import Tile
 
 np.set_printoptions(linewidth=500)
 
-#****************************************
-#   关于boundingVolume中sphere类型的操作
-#****************************************
+#***********************************************************
+#   Regarding the operation of sphere type in boundingVolume
+#***********************************************************
 class BoundingVolumeSphere(BoundingVolume[BoundingVolumeSphereDictType]):
-
+    """
+    The boundingVolume. sphere property is an array of four numbers used to define a bounding sphere. 
+    The first three elements define the x, y, and z values of the center of the sphere in the right-hand 3-axis (x, y, z) Cartesian coordinate system along the z-axis. 
+    The last element (index 3) defines the radius in meters
+    """
     def __init__(self) -> None:
         super().__init__()
         self._sphere: npt.NDArray[np.float64] | None = None
 
     @classmethod
-    # 从字典中返回sphere类型的boundingVolume
     def from_dict(cls, bounding_volume_sphere_dict: BoundingVolumeSphereDictType) -> Self:
         bounding_volume_sphere = cls()
         bounding_volume_sphere.set_from_list(bounding_volume_sphere_dict["sphere"])
@@ -31,6 +35,26 @@ class BoundingVolumeSphere(BoundingVolume[BoundingVolumeSphereDictType]):
         bounding_volume_sphere.set_properties_from_dict(bounding_volume_sphere_dict)
 
         return bounding_volume_sphere
+
+
+    def get_center(self) -> npt.NDArray[np.float64]:
+        pass
+    
+
+    def translate(self, offset: npt.NDArray[np.float64]) -> None:
+        pass
+
+
+    def transform(self, transform: npt.NDArray[np.float64]) -> None:
+        pass
+
+
+    def add(self, other: BoundingVolume[Any]) -> None:
+        pass
+
+
+    def sync_with_children(self, owner: Tile) -> None:
+        pass
 
     # 判断boundingVoume的类型是否为sphere
     def is_sphere(self) -> bool:

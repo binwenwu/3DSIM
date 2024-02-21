@@ -20,12 +20,12 @@ from .root_property import RootProperty
 if TYPE_CHECKING:
     from tileset import TileSet
 
-DEFAULT_TRANSFORMATION = np.identity(4, dtype=np.float64) # 生成一个4*4的单位矩阵,默认的变换矩阵
-DEFAULT_TRANSFORMATION.setflags(write=False) # 设置为只读
+DEFAULT_TRANSFORMATION = np.identity(4, dtype=np.float64) # Default transformation matrix
+DEFAULT_TRANSFORMATION.setflags(write=False) # Set as read-only
 
-#**************************************
-#   Tile类，定义关于每个tile的相关操作
-#**************************************
+#*********************************************************
+#   Tile class, defining relevant operations for each tile
+#*********************************************************
 class Tile(RootProperty[TileDictType]):
     def __init__(
         self,
@@ -43,13 +43,12 @@ class Tile(RootProperty[TileDictType]):
         self.set_refine_mode(refine_mode)
         self.content: Content | None = None
         self.contents: Contents | None = None
-
         self.children: list[Tile] = []
         self.transform = transform
         self.adeOfMetadata = metadataUri
+        # self.content_uri: Path | None = content_uri
 
     @classmethod
-    # 从字典中获取tile
     def from_dict(cls, tile_dict: TileDictType, metadataPath: Path | None = None) -> Tile:
         tile = cls()
         if "box" in tile_dict["boundingVolume"]:
@@ -93,30 +92,38 @@ class Tile(RootProperty[TileDictType]):
         Returns if there is a tile content (loaded or not).
         """
         return bool(self.content is not None)
+    
     def has_contents(self) -> bool:
         return bool(self.contents is not None)
 
-    # 删除tile
+
     def delete_on_disk(self, root_uri: Path, delete_sub_tileset: bool = False) -> None:
+        """
+        Deletes all files linked to the tile and its children. The uri of the folder where tileset is, should be defined.
+
+        :param root_uri: The folder where tileset is
+        :param delete_sub_tileset: If True, all tilesets present as tile content will be removed as well as their content.
+        If False, the linked tilesets in tiles won't be removed.
+        """
         for child in self.children:
             child.delete_on_disk(root_uri, delete_sub_tileset)
 
+        # if there is no content_uri, there is no file to remove
         if self.content is None:
             return
-
-        # @author:wbw
-        # 然后，判断当前节点是否包含内容对象。如果不包含，则直接返回。
-        # 否则，判断内容对象的 URI 是否为绝对路径。如果是，则将其赋值给 tile_content_path 变量；
-        # 否则，将 root_uri 和内容对象的 URI 拼接起来，赋值给 tile_content_path 变量。
-        # 最后，使用 unlink 方法删除 tile_content_path 变量所表示的文件。
+        
         if self.content.content_uri.is_absolute():
             tile_content_path = self.content.content_uri
         else:
             tile_content_path = root_uri / self.content.content_uri
 
-        tile_content_path.unlink()
+        if tile_content_path.suffix == ".json":
+            if delete_sub_tileset:
+                self.get_or_fetch_content(root_uri).delete_on_disk(tile_content_path)  # type: ignore
+        else:
+            tile_content_path.unlink()
+
     
-    # 设置refine的模式：ADD or REPLACE
     def set_refine_mode(self, mode: RefineType) -> None:
         if mode != "ADD" and mode != "REPLACE" and mode!=None:
             raise InvalidTilesetError(
@@ -124,11 +131,11 @@ class Tile(RootProperty[TileDictType]):
             )
         self._refine = mode
     
-    # 获得remode模式
+
     def get_refine_mode(self) -> RefineType:
         return self._refine
     
-    # 给tile增加孩子结点
+
     def add_child(self, tile: Tile) -> None:
         self.children.append(tile)
 
@@ -136,31 +143,36 @@ class Tile(RootProperty[TileDictType]):
             if self.bounding_volume is None:
                 self.bounding_volume = copy.deepcopy(tile.bounding_volume)
 
-    # 获取某个结点的孩子结点
+
     def get_children(self) -> list[Tile]:
         children = []
         for child in self.children:
             children.append(child)
         return children
 
-    # 获取所有子孙节点
+
     def get_all_children(self) -> list[Tile]:
+        """
+        :return: the recursive (across the children tree) list of the children tiles
+        """
         descendants = []
         for child in self.children:
+            # Add the child...
             descendants.append(child)
+            # and if (and only if) they are grand-children then recurse
             if child.children:
                 descendants += child.get_all_children()
         return descendants
 
 
-    # 将tile转化为字典
     def to_dict(self) -> TileDictType:
         dict_data: TileDictType = {}
         if self.bounding_volume is not None:
-            # print(self.bounding_volume)
             bounding_volume = self.bounding_volume
             if bounding_volume is not None:
                 dict_data["boundingVolume"] = bounding_volume
+        else:
+            raise InvalidTilesetError("Bounding volume is not set")
         
         if self._refine is not None:
             if self._refine not in ["ADD", "REPLACE"]:
@@ -172,8 +184,7 @@ class Tile(RootProperty[TileDictType]):
         if self.geometric_error is not None:
             dict_data["geometricError"] = self.geometric_error
 
-        # @author:wbw
-        # 为什么是以这种方式去加 (原始基类就有的就直接加，继承后才有的属性通过该方法加？)
+
         dict_data = self.add_root_properties_to_dict(dict_data, self.adeOfMetadata)
 
         if (
@@ -184,7 +195,6 @@ class Tile(RootProperty[TileDictType]):
                 dict_data["transform"] = list(self.transform.flatten())
 
         if self.children:
-            # print(self.children)
             dict_data["children"] = [child.to_dict() for child in self.children]
 
         if self.content:
@@ -219,12 +229,9 @@ class Tile(RootProperty[TileDictType]):
                 return bounding_volume
 
     def strToTransformMatrix(self,strTransformMatrix):
-        # 去掉大括号和逗号
         if strTransformMatrix != 'None':
             strTransformMatrix.replace('{', '').replace('}', '').replace(',', '')
-            # 使用 fromstring() 函数将字符串转换为一维数组
             arr = np.fromstring(strTransformMatrix, sep=' ')
-
             return arr
 
 

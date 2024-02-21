@@ -22,8 +22,6 @@ class BaseMetadata(ABC):
     @classmethod
     @abstractmethod
     def from_dict(cls, metadata_dict: MetaDataType) -> BaseMetadata:
-        # @author:wbw
-        # 因为这里是抽象类，所以方法体省略
         ...
 
     @abstractmethod

@@ -1,5 +1,5 @@
-import mmh3
 from __future__ import annotations
+import mmh3
 
 from enum import Enum
 from io import StringIO
