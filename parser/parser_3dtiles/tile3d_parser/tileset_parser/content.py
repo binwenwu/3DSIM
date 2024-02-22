@@ -24,9 +24,6 @@ class Content(RootProperty[ContentType]):
                  metadataPath: Path | None = None
                  ) -> None:
         super().__init__()
-        # @author:wbw
-        # content继承自RootProperty，其中泛型为ContentType，ContentType是一个字典类型，表示一张瓦片的内容属性，包括boundingVolume、transform、uri等属性
-        # 这里content的前三个属性延续了ContentType的属性，boundingVolume、transform、uri，而 adeOfMetadata 用初始化时的 metadataPath
         self.bounding_volume = bounding_volume
         self.transform = transform
         self.content_uri: Path | None = content_uri

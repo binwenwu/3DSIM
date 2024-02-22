@@ -18,8 +18,10 @@ if TYPE_CHECKING:
     from .tile import Tile
 
 
-# @author:wbw
-# 定义包围盒泛型类型，可接受三种具体的字典类型
+"""
+Define the bounding box generic type, 
+which can accept three specific dictionary types
+"""
 _BoundingVolumeJsonDictT = TypeVar(
     "_BoundingVolumeJsonDictT",
     BoundingVolumeBoxDictType,

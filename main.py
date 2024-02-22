@@ -18,7 +18,7 @@ def main():
     # 3 for add raster relief
     # 4 for add physical field
     # 5 for add point cloud
-    mode = 1
+    mode = 4
     if mode == 1:
         p3d = Parser3DTiles()
         testPath = "/home/program/3dsim/data/3dtiles/DA16_3D_Buildings/tileset.json"
@@ -36,8 +36,8 @@ def main():
         pr.add_data(mimeType = 'GEOTIFF', path = testPath,createTime='20240226', validTime=['19950923', '20050101'])
     if mode == 4:
         ppf = ParserPhysicalField()
-        testPath = "/home/program/3dsim/data/physicalfield/example_1.nc"
-        ppf.add_data(mimeType = 'NETCDF', path = testPath,createTime='20240226', validTime=['19950923', '20050101'])
+        testPath = "/home/program/3dsim/data/physicalfield/NPP_MOFTS_L1.A2024051.0124.001.2024051072405.hdf"
+        ppf.add_data(mimeType = 'HDF', path = testPath,createTime='20240226', validTime=['19950923', '20050101'])
     if mode == 5:
         ppc = ParserPointcloud()
         testPath = "/home/program/3dsim/data/pointcloud/building_01.las"

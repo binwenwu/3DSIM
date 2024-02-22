@@ -29,7 +29,6 @@ class BoundingVolumeRegion(BoundingVolume[BoundingVolumeRegionDictType]):
         self._region: npt.NDArray[np.float64] | None = None
 
     @classmethod
-    # 从字典中返回region类型的boundingVolume
     def from_dict(cls, bounding_volume_region_dict: BoundingVolumeRegionDictType) -> Self:
         bounding_volume_region = cls()
         bounding_volume_region.set_from_list(bounding_volume_region_dict["region"])
@@ -62,7 +61,6 @@ class BoundingVolumeRegion(BoundingVolume[BoundingVolumeRegionDictType]):
     def is_region(self) -> bool:
         return True
 
-    # 从字符串中返回region
     def set_from_list(self, region_list: npt.ArrayLike) -> None:
         region = np.array(region_list, dtype=float)
 
@@ -71,7 +69,6 @@ class BoundingVolumeRegion(BoundingVolume[BoundingVolumeRegionDictType]):
             raise ValueError(reason)
         self._region = region
 
-    # 将region类型的boundingVolume输出为字典
     def to_dict(self) -> BoundingVolumeRegionDictType:
         if self._region is None:
             raise AttributeError("Bounding Volume Region is not defined.")
@@ -80,7 +77,6 @@ class BoundingVolumeRegion(BoundingVolume[BoundingVolumeRegionDictType]):
         return self.add_root_properties_to_dict(dict_data)
 
     @staticmethod
-    # 判断是否为正确的region
     def is_valid(region: npt.NDArray[np.float64]) -> tuple[bool, str]:
         if region is None:
             return False, "Bounding Volume Region is not defined."

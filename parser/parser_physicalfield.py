@@ -15,6 +15,7 @@ from mongodb_operations.mongodb import MongoDB
 
 from tools.utils import generate_short_hash
 from minio_operations.minio import get_endpoint_minio
+from pyhdf.SD import SD, SDC
 
 # Notice:
 # NetCDF is very flexible, making it difficult to form a standardized ingestion script. 
@@ -44,6 +45,8 @@ class ParserPhysicalField(ThreeDSIMBase):
 
         if self._mimeType == PhysicalFieldType.NETCDF.value:
             self._read_netcdf(physicalFieldAsset)
+        elif self._mimeType == PhysicalFieldType.HDF.value:
+            self._read_hdf(physicalFieldAsset)
         else:
             raise ValueError("the physical field type is not supported currently")
          
@@ -92,6 +95,35 @@ class ParserPhysicalField(ThreeDSIMBase):
         asset.update(bv)
         asset.update(thickness)
     
+    def _read_hdf(self, asset: dict)->None:
+        file = SD(self._uri)
+        datasets_dic = file.datasets()
+       
+        for idx,sds in enumerate(datasets_dic.keys()):
+            print(idx,sds)
+        
+        lat = file.select('Latitude').get() 
+        lon = file.select('Longitude').get()
+        height = file.select('Height').get()
+
+        xmin, xmax = lon.min(), lon.max()
+        ymin, ymax = lat.min(), lat.max()
+        zmin, zmax = height.min(), height.max()
+        
+        print(lat.max(),lat.min())
+        print(lon.max(),lon.min())
+        print(height.max(),height.min())
+
+        bv = BoundingVolume.conver_to_standardAABB(xmin, ymin, xmax, ymax, zmin, zmax)
+        resolution_x, resolution_y = abs(float(lon[0][1] - lon[0][0])), abs(float(lat[1][0] - lat[0][0]))
+        resolution_str = f"{resolution_x:.3f},{resolution_y:.3f}"
+        res = {"resolution":resolution_str}
+        thickness = {"pixelThinkness":zmax - zmin}
+        asset.update(res)
+        asset.update(bv)
+        asset.update(thickness)
+
+
     # compute the identifier atrribute of the tile
     def _compute_identifier_value(self)->dict:
         return {
