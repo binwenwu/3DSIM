@@ -18,11 +18,11 @@ def main():
     # 3 for add raster relief
     # 4 for add physical field
     # 5 for add point cloud
-    mode = 4
+    mode = 5
     if mode == 1:
         p3d = Parser3DTiles()
-        testPath = "/home/program/3dsim/data/3dtiles/DA16_3D_Buildings/tileset.json"
-        p3d.add_data(testPath,featureType='Building',createTime='20230116', validTime=['19950923', '20050101'])
+        _3dtilesPath = "/home/program/3dsim/data/3dtiles/DA16_3D_Buildings/tileset.json"
+        p3d.add_data(_3dtilesPath,featureType='Building',createTime='20230116', validTime=['19950923', '20050101'])
     if mode == 2:
         ix = 0  
         query  = Query()
@@ -36,12 +36,18 @@ def main():
         pr.add_data(mimeType = 'GEOTIFF', path = testPath,createTime='20240226', validTime=['19950923', '20050101'])
     if mode == 4:
         ppf = ParserPhysicalField()
-        testPath = "/home/program/3dsim/data/physicalfield/NPP_MOFTS_L1.A2024051.0124.001.2024051072405.hdf"
-        ppf.add_data(mimeType = 'HDF', path = testPath,createTime='20240226', validTime=['19950923', '20050101'])
+        hdfPath = "/home/program/3dsim/data/physicalfield/NPP_MOFTS_L1.A2024051.0124.001.2024051072405.hdf"
+        ppf.add_data(mimeType = 'HDF', path = hdfPath,createTime='20240226', validTime=['19950923', '20050101'])
+        netcdfPath = "/home/program/3dsim/data/physicalfield/example_1.nc"
+        ppf.add_data(mimeType = 'NETCDF', path = netcdfPath,createTime='20240226', validTime=['19950923', '20050101'])
     if mode == 5:
         ppc = ParserPointcloud()
-        testPath = "/home/program/3dsim/data/pointcloud/building_01.las"
-        ppc.add_data(mimeType = 'LAS', path = testPath,createTime='20240226', validTime=['19950923', '20050101'])
+        lasPath = "/home/program/3dsim/data/pointcloud/building_01.las"
+        ppc.add_data(mimeType = 'LAS', path = lasPath, createTime='20240226', validTime=['19950923', '20050101'])
+        lazPath = "/home/program/3dsim/data/pointcloud/building_02.laz"
+        ppc.add_data(mimeType = 'LAZ', path = lazPath, createTime='20240226', validTime=['19950923', '20050101'])
+        xyzPath = "/home/program/3dsim/data/pointcloud/fake.xyz"
+        ppc.add_data(mimeType = 'XYZ', path = xyzPath, createTime='20240226', validTime=['19950923', '20050101'])
     pass
 
 if __name__ == "__main__":

@@ -4,8 +4,9 @@ from mongodb_operations.mongo_template import template_model_asset_pointcloud
 from base.type import Transform, ModelAsset, PointCloudType
 import laspy
 from base.bounding_volume import BoundingVolume
+import numpy as np
 
-# TODO 三维点云解析
+
 class ParserPointcloud(ThreeDSIMBase):
     def __init__(self)-> None:
         super().__init__()
@@ -27,12 +28,15 @@ class ParserPointcloud(ThreeDSIMBase):
         print("## the point clond field inserted")
     
 
-    # TODO:wbw
     def _convert_pointCloud_to_fact(self)->None:
         pointCloudAsset  = template_model_asset_pointcloud.copy() 
 
         if self._mimeType == PointCloudType.LAS.value:
             self._read_las(pointCloudAsset)
+        elif self._mimeType == PointCloudType.LAZ.value:
+            self._read_laz(pointCloudAsset)
+        elif self._mimeType == PointCloudType.XYZ.value:
+            self._read_xyz(pointCloudAsset)
         else:
             raise ValueError("the pointCloud type is not supported currently")
          
@@ -46,7 +50,7 @@ class ParserPointcloud(ThreeDSIMBase):
 
 
     def _read_las(self, asset: dict)->None:
-        las = laspy.read("/home/program/3dsim/data/pointcloud/building_01.las")
+        las = laspy.read(self._uri)
         x_min = las.header.x_min
         x_max = las.header.x_max
         y_min = las.header.y_min
@@ -56,7 +60,26 @@ class ParserPointcloud(ThreeDSIMBase):
         bv = BoundingVolume.conver_to_standardAABB(y_min, x_min, y_max, x_max, z_min, z_max)
         asset.update(bv)
 
+    def _read_laz(self, asset: dict)->None:
+        laz = laspy.read(self._uri)
+        x_min = laz.header.x_min
+        x_max = laz.header.x_max
+        y_min = laz.header.y_min
+        y_max = laz.header.y_max
+        z_min = laz.header.z_min
+        z_max = laz.header.z_max
+        bv = BoundingVolume.conver_to_standardAABB(y_min, x_min, y_max, x_max, z_min, z_max)
+        asset.update(bv)
+    
 
+    def _read_xyz(self, asset: dict)->None:
+        with open(self._uri, 'r') as file:
+            lines = file.readlines()
+            data = np.array([list(map(float, line.split())) for line in lines])
+        min_xyz = np.min(data, axis=0)
+        max_xyz = np.max(data, axis=0)
+        bv = BoundingVolume.conver_to_standardAABB(min_xyz[0], min_xyz[1], max_xyz[0], max_xyz[1], min_xyz[2], max_xyz[2])
+        asset.update(bv)
 
     # compute the identifier atrribute of the tile
     def _compute_identifier_value(self)->dict:
