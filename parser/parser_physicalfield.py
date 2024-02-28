@@ -5,8 +5,8 @@ from netCDF4 import Dataset
 import numpy as np
 import math
 
-from base.bounding_volume import BoundingVolume
-from base.type import PhysicalFieldType
+from .base.bounding_volume import BoundingVolume
+from .base.type import PhysicalFieldType
 
 from base.base_3dsim import ThreeDSIMBase
 from rmdb_operations.sql_commonds import *
@@ -87,7 +87,7 @@ class ParserPhysicalField(ThreeDSIMBase):
         print("\nresolution_y: ",resolution_y)
 
         # convert bounds and max/min value to standard AABB
-        bv = BoundingVolume.conver_to_standardAABB(xmin, ymin, xmax, ymax, zmin, zmax)
+        bv = BoundingVolume.convert_to_standardAABB(xmin, ymin, xmax, ymax, zmin, zmax)
         resolution_str = f"{resolution_x:.3f},{resolution_y:.3f}"
         res = {"resolution":resolution_str}
         thickness = {"pixelThinkness":zmax - zmin}
@@ -114,7 +114,7 @@ class ParserPhysicalField(ThreeDSIMBase):
         print(lon.max(),lon.min())
         print(height.max(),height.min())
 
-        bv = BoundingVolume.conver_to_standardAABB(xmin, ymin, xmax, ymax, zmin, zmax)
+        bv = BoundingVolume.convert_to_standardAABB(xmin, ymin, xmax, ymax, zmin, zmax)
         resolution_x, resolution_y = abs(float(lon[0][1] - lon[0][0])), abs(float(lat[1][0] - lat[0][0]))
         resolution_str = f"{resolution_x:.3f},{resolution_y:.3f}"
         res = {"resolution":resolution_str}

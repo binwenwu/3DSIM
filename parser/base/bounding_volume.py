@@ -15,8 +15,9 @@ class BoundingVolume:
     def __init__(self):
         pass
     
+    # Convert the bounding box type in 3dtiles to a standard bounding box type
     @staticmethod
-    def convert_to_standardBV(input_bv_type: InputBVType, bv_data: list) -> dict:
+    def convert_3dtilesBV_to_standardBV(input_bv_type: InputBVType, bv_data: list) -> dict:
         if input_bv_type == InputBVType.Box_3dtile:
             return BoundingVolume._convert_box_to_obb(bv_data)
         elif input_bv_type == InputBVType.Region_3dtile:
@@ -25,22 +26,10 @@ class BoundingVolume:
             return BoundingVolume._convert_sphere_to_sphere(bv_data)        
         else:
             raise ValueError("Unsupported Bounding Volume Type.")
+        
     
     @staticmethod
-    def conver_to_standardAABB(west: float, south: float, 
-                               east: float, north: float,
-                               min_height: float, max_height: float) -> dict:
-        aabb_data = [west, south, east, north, min_height, max_height]
-        bv = {
-            "boundingVolume":{
-                    "type": "AABB",
-                    "bv": aabb_data
-                }
-        }
-        return bv
-
-    @staticmethod
-    def convert_standardBV_to_3dtiles(boundingVolume: dict) -> dict:
+    def convert_standardBV_to_3dtilesBV(boundingVolume: dict) -> dict:
         bvType = boundingVolume['type']
         bv = boundingVolume['bv']
         if bvType == BoundingVolumeType.AABB.value:
@@ -58,9 +47,24 @@ class BoundingVolume:
         else:
             print(boundingVolume)
             raise ValueError("Unsupported Bounding Volume Type.")
+    
 
     @staticmethod
-    def convert_to_AABB(input: dict) -> dict:
+    def convert_to_standardAABB(west: float, south: float, 
+                               east: float, north: float,
+                               min_height: float, max_height: float) -> dict:
+        aabb_data = [west, south, min_height, east, north, max_height]
+        bv = {
+            "boundingVolume":{
+                    "type": "AABB",
+                    "bv": aabb_data
+                }
+        }
+        return bv
+    
+
+    @staticmethod
+    def convert_standardBV_to_standardAABB(input: dict) -> dict:
         bv = input["boundingVolume"]
         if bv["type"] == BoundingVolumeType.AABB.value:
             return bv
@@ -139,7 +143,9 @@ class BoundingVolume:
     @staticmethod
     def _convert_region_to_aabb(region_list: List[float]) -> dict:
         # refer to 3D Tiles specification BoundingVolume.region
+
         region = BoundingVolume._arc_to_wgs84(region_list)# Convert the region parameters from radians to degrees
+
         west, south, east, north, min_height, max_height = region
 
         # Construct the AABB data [min_x, min_y, min_z, max_x, max_y, max_z]

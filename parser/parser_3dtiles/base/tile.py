@@ -7,7 +7,7 @@ from typing import Any, TYPE_CHECKING
 import numpy as np
 import numpy.typing as npt
 
-from .exceptions import InvalidTilesetError, TilerException
+from  base.exceptions import InvalidTilesetError, TilerException
 from .type import RefineType, TileDictType
 from .bounding_volume import BoundingVolume
 from .bounding_volume_box import BoundingVolumeBox

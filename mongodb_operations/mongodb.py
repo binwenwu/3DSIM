@@ -2,16 +2,6 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 
-"""
-@author:wbw
-这段代码定义了一个名为 `MongoDB` 的 Python 类，用于连接 MongoDB 数据库，并提供了一些方法来操作数据库中的文档。
-
-在类的构造函数中，定义了 `database`、`host`、`port`、`username` 和 `password` 等参数，用于指定数据库的连接信息。
-在 `connect` 方法中，使用 `pymongo` 模块的 `MongoClient` 类连接数据库，并检查指定的数据库是否存在，如果不存在，
-则调用 `createDB` 方法创建数据库。在 `add_document`、`remove_document` 和 `search_documents` 方法中，
-分别实现了向指定集合添加文档、删除指定集合中的文档和查询指定集合中的文档的功能。在 `createDB` 方法中，创建了三个集合，
-分别为 `3DSceneFact`、`3DModelFact` 和 `SceneEdge`，并为每个集合创建了多个索引。在 `getObjectId` 方法中，返回了一个新的 `ObjectId` 对象。
-"""
 class MongoDB:
     def __init__(self, database="3dsim", host="127.0.0.1", port=27017, username="", password=""):
         self._database = database

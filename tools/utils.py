@@ -6,6 +6,7 @@ from io import StringIO
 from pathlib import Path, PurePath
 from typing import TYPE_CHECKING, Callable, NamedTuple, TypeVar
 
+
 import numpy as np
 import numpy.typing as npt
 from pyproj import CRS
@@ -20,6 +21,46 @@ _T = TypeVar("_T", bound=npt.NBitBase)
 MIN_AABB_SIZE = 0.00001
 
 
+def make_rotation_matrix(
+    z1: "npt.NDArray[np.floating[_T]]", z2: "npt.NDArray[np.floating[_T]]"
+) -> "npt.NDArray[np.floating[_T]]":
+    v0: "npt.NDArray[np.floating[_T]]" = z1 / np.linalg.norm(z1)
+    v1: "npt.NDArray[np.floating[_T]]" = z2 / np.linalg.norm(z2)
+
+    angle = np.arccos(np.clip(np.dot(v0, v1), -1.0, 1.0))
+    direction = np.cross(v0, v1)
+
+    sina = np.sin(angle)
+    cosa = np.cos(angle)
+    direction[:3] /= np.sqrt(np.dot(direction[:3], direction[:3]))
+    # rotation matrix around unit vector
+    rotation_matrix = np.diag([cosa, cosa, cosa])
+    rotation_matrix += np.outer(direction, direction) * (1.0 - cosa)
+    direction *= sina
+    rotation_matrix += np.array(
+        [
+            [0.0, -direction[2], direction[1]],
+            [direction[2], 0.0, -direction[0]],
+            [-direction[1], direction[0], 0.0],
+        ]
+    )
+    final_rotation_matrix = np.identity(4, dtype=z1.dtype)
+    final_rotation_matrix[:3, :3] = rotation_matrix
+
+    return final_rotation_matrix
+
+
+def make_scale_matrix(factor: float) -> npt.NDArray[np.float32]:
+    return np.diag([factor, factor, factor, 1.0])
+
+
+def make_translation_matrix(
+    direction: "npt.NDArray[np.floating[_T]]",
+) -> "npt.NDArray[np.floating[_T]]":
+    translation_matrix = np.identity(4, dtype=direction.dtype)
+    translation_matrix[:3, 3] = direction[:3]
+    return translation_matrix
+
 
 def generate_short_hash(input_string, length=8):
     # Calculate MurmurHash
@@ -30,157 +71,6 @@ def generate_short_hash(input_string, length=8):
     return short_hash
 
 
-# TODO 以下参考py3dtiles
-# def str_to_CRS(srs: str | CRS | None) -> CRS | None:
-#     """
-#     Convert a string in a pyproj CRS object. The string could be an epsg code or a Proj4 string. If srs is already
-#     a CRS object, the function returns the same CRS definition.
-#     """
-#     if srs is None:
-#         return None
-
-#     try:
-#         return CRS.from_epsg(int(srs))  # type: ignore [arg-type]
-#     except ValueError:
-#         return CRS(srs)
-
-
-# class CommandType(Enum):
-#     READ_FILE = b"read_file"
-#     WRITE_PNTS = b"write_pnts"
-#     PROCESS_JOBS = b"process_jobs"
-#     SHUTDOWN = b"shutdown"
-
-
-# class ResponseType(Enum):
-#     REGISTER = b"register"
-#     IDLE = b"idle"
-#     HALTED = b"halted"
-#     READ = b"read"
-#     PROCESSED = b"processed"
-#     PNTS_WRITTEN = b"pnts_written"
-#     NEW_TASK = b"new_task"
-#     ERROR = b"error"
-
-
-# class OctreeMetadata(NamedTuple):
-#     aabb: npt.NDArray[np.float64]
-#     spacing: float
-#     scale: float
-
-
-# if TYPE_CHECKING:
-#     Param = ParamSpec("Param")
-#     RetType = TypeVar("RetType")
-
-
-# def profile(func: Callable[Param, RetType]) -> Callable[Param, RetType]:
-#     from line_profiler import LineProfiler
-#     def wrapper(*args, **kwargs):  # type: ignore [no-untyped-def]
-#         lp = LineProfiler()
-#         deco = lp(func)
-#         res = deco(*args, **kwargs)
-#         s = StringIO()
-#         lp.print_stats(stream=s)
-#         print(s.getvalue())
-#         return res
-
-#     return wrapper
-
-
-# class SubdivisionType(Enum):
-#     OCTREE = 1
-#     QUADTREE = 2
-
-
-# def node_name_to_path(
-#     working_dir: Path, name: bytes, suffix: str = "", split_len: int = 8
-# ) -> Path:
-#     """
-#     Get the path of a tile from its name and the working directory.
-#     If the name is '222262175' with the suffix '.pnts', the result is 'working_dir/22226217/r5.pnts'
-#     """
-#     str_name = name.decode("ascii")
-#     if len(str_name) <= split_len:
-#         filename = PurePath("r" + str_name + suffix)
-#     else:
-#         # the name is split on every 'split_len' char to avoid to have too many tiles on the same folder.
-#         sub_folders = [
-#             str_name[i : i + split_len] for i in range(0, len(str_name), split_len)
-#         ]
-#         working_dir = working_dir.joinpath(*sub_folders[:-1])
-#         filename = PurePath("r" + sub_folders[-1] + suffix)
-
-#     full_path = working_dir / filename
-#     working_dir.mkdir(parents=True, exist_ok=True)
-
-#     return full_path
-
-
-# def compute_spacing(aabb: npt.NDArray[np.floating[_T]]) -> float:
-#     return float(np.linalg.norm(aabb[1] - aabb[0]) / 125)
-
-
-# def aabb_size_to_subdivision_type(
-#     size: npt.NDArray[np.floating[_T]],
-# ) -> SubdivisionType:
-#     if size[2] / min(size[0], size[1]) < 0.5:
-#         return SubdivisionType.QUADTREE
-#     else:
-#         return SubdivisionType.OCTREE
-
-
-# def split_aabb(
-#     aabb: npt.NDArray[np.floating[_T]], index: int, force_quadtree: bool = False
-# ) -> npt.NDArray[np.floating[_T]]:
-#     half = (aabb[1] - aabb[0]) * 0.5
-#     t = aabb_size_to_subdivision_type(half)
-
-#     new_aabb = np.array([aabb[0], aabb[0] + half])
-#     if index & 4:
-#         new_aabb[0][0] += half[0]
-#         new_aabb[1][0] += half[0]
-#     if index & 2:
-#         new_aabb[0][1] += half[1]
-#         new_aabb[1][1] += half[1]
-
-#     if force_quadtree or t == SubdivisionType.QUADTREE:
-#         new_aabb[1][2] += half[2]
-#     elif index & 1:
-#         new_aabb[0][2] += half[2]
-#         new_aabb[1][2] += half[2]
-
-#     return new_aabb
-
-
-# def make_aabb_cubic(aabb: npt.NDArray[np.floating[_T]]) -> npt.NDArray[np.floating[_T]]:
-#     s = max(aabb[1] - aabb[0])
-#     aabb[1][0] = aabb[0][0] + s
-#     aabb[1][1] = aabb[0][1] + s
-#     aabb[1][2] = aabb[0][2] + s
-#     return aabb
-
-
-# def make_aabb_valid(aabb: list[list[float]]) -> None:
-#     """
-#     Modify inplace the aabb so that no dimension is 0-sized
-#     """
-#     for i in range(3):
-#         if aabb[0][i] == aabb[1][i]:
-#             aabb[1][i] = aabb[1][i] + MIN_AABB_SIZE
-
-
-# def node_from_name(
-#     name: bytes,
-#     parent_aabb: npt.NDArray[np.floating[_T]],
-#     parent_spacing: float,
-# ) -> Node:
-#     from py3dtiles.tilers.node import Node
-
-#     spacing = parent_spacing * 0.5
-#     aabb = split_aabb(parent_aabb, int(name[-1])) if len(name) > 0 else parent_aabb
-#     # let's build a new Node
-#     return Node(name, aabb.astype(np.float64), spacing)
 
 
 

@@ -5,7 +5,7 @@ import numpy.typing as npt
 
 from .root_property import RootProperty
 from .type import ContentType
-from .exceptions import InvalidTilesetError
+from  base.exceptions import InvalidTilesetError
 from .bounding_volume import BoundingVolume
 from .bounding_volume_box import BoundingVolumeBox
 from .bounding_volume_sphere import BoundingVolumeSphere

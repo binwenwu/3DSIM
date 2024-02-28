@@ -5,8 +5,9 @@ import rasterio
 import numpy as np
 import math
 
-from base.bounding_volume import BoundingVolume, InputBVType
-from base.type import Transform, ModelAsset, ReliefType
+from .base.bounding_volume import BoundingVolume, InputBVType
+from .base.Transform import Transform
+from .base.type import ModelAsset, ReliefType
 from tools.render_range_convert import RangeMode, RangeConverter
 
 from base.base_3dsim import ThreeDSIMBase
@@ -80,7 +81,7 @@ class ParserRelief(ThreeDSIMBase):
             print("bounds: ",bounds)
 
             # convert bounds and max/min value to standard AABB
-            bv = BoundingVolume.conver_to_standardAABB(bounds.left, bounds.bottom, 
+            bv = BoundingVolume.convert_to_standardAABB(bounds.left, bounds.bottom, 
                                               bounds.right, bounds.top, min_value, max_value)
             resolution_str = f"{resolution_x:.3f},{resolution_y:.3f}"
             res = {"resolution":resolution_str}

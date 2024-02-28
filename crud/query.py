@@ -8,7 +8,7 @@ class Query(ThreeDSIMBase):
     def query_rootSceneAsset(self, product: list[str]=['3DTiles','CityGML','OSG', 'I3S'], 
                              spatialExtent: list[float] = [-180, -90, 180, 90],
                              timeSpan: list[str] = ['19000101', '20990101'], 
-                             feature: list[str] = ['Building'], viewedRange: list[float] = [0,9999999]):
+                             feature: list[str] = ['Building'], viewedRange: list[float] = [0,9999999]) -> list:
         """
         Query the root scene asset such as 3DTiles, CityGML, OSG, I3S
         :param product: product name list,
@@ -44,7 +44,7 @@ class Query(ThreeDSIMBase):
     def query_modelAsset(self, product: list[str]=['RasterRelief','PointCloud','PhysicalField', '3DMesh'], 
                              spatialExtent: list[float] = [-180, -90, 180, 90],
                              timeSpan: list[str] = ['19000101', '20990101'], 
-                             feature: list[str] = ['Building'], viewedRange: list[float] = [0,9999999]):
+                             feature: list[str] = ['Building'], viewedRange: list[float] = [0,9999999])->list:
         """
         Query the model asset such as RasterRelief, PointCloud, PhysicalField, 3DMesh
         Notice: Include the model asset that make up the 3D scene
@@ -219,11 +219,11 @@ class Query(ThreeDSIMBase):
         view_point_levels = [str(row[0]) for row in result]
         return view_point_levels
     
-    # TODO 还未经过测试
+    # TODO Not yet tested
     def query_dimension(self, product: list[str]=['3DTiles','CityGML','OSG', 'I3S'], 
                              spatialExtent: list[float] = [-180, -90, 180, 90],
                              timeSpan: list[str] = ['19000101', '20990101'], 
-                             feature: list[str] = ['Building'], viewedRange: list[float] = [0,9999999]):
+                             feature: list[str] = ['Building'], viewedRange: list[float] = [0,9999999]) -> dict:
         """
         Query the dimension value
         :param product: product name list,

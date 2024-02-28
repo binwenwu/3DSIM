@@ -1,5 +1,5 @@
 import math
-from base.type import RangeMode
+from parser.base.type import RangeMode
 
 class RangeConverter:
     @staticmethod

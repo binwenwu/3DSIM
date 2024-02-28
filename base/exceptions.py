@@ -1,3 +1,6 @@
+#*******************************************
+#   About Some Classes of Exception Handling
+#*******************************************
 class Py3dtilesException(Exception):
     """
     All exceptions thrown by py3dtiles code derives this class.

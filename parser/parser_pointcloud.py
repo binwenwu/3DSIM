@@ -1,9 +1,10 @@
 import os
 from base.base_3dsim import ThreeDSIMBase
 from mongodb_operations.mongo_template import template_model_asset_pointcloud
-from base.type import Transform, ModelAsset, PointCloudType
+from .base.Transform import Transform
+from .base.type import ModelAsset, PointCloudType
 import laspy
-from base.bounding_volume import BoundingVolume
+from .base.bounding_volume import BoundingVolume
 import numpy as np
 
 
@@ -57,7 +58,7 @@ class ParserPointcloud(ThreeDSIMBase):
         y_max = las.header.y_max
         z_min = las.header.z_min
         z_max = las.header.z_max
-        bv = BoundingVolume.conver_to_standardAABB(y_min, x_min, y_max, x_max, z_min, z_max)
+        bv = BoundingVolume.convert_to_standardAABB(y_min, x_min, y_max, x_max, z_min, z_max)
         asset.update(bv)
 
     def _read_laz(self, asset: dict)->None:
@@ -68,7 +69,7 @@ class ParserPointcloud(ThreeDSIMBase):
         y_max = laz.header.y_max
         z_min = laz.header.z_min
         z_max = laz.header.z_max
-        bv = BoundingVolume.conver_to_standardAABB(y_min, x_min, y_max, x_max, z_min, z_max)
+        bv = BoundingVolume.convert_to_standardAABB(y_min, x_min, y_max, x_max, z_min, z_max)
         asset.update(bv)
     
 
@@ -78,7 +79,7 @@ class ParserPointcloud(ThreeDSIMBase):
             data = np.array([list(map(float, line.split())) for line in lines])
         min_xyz = np.min(data, axis=0)
         max_xyz = np.max(data, axis=0)
-        bv = BoundingVolume.conver_to_standardAABB(min_xyz[0], min_xyz[1], max_xyz[0], max_xyz[1], min_xyz[2], max_xyz[2])
+        bv = BoundingVolume.convert_to_standardAABB(min_xyz[0], min_xyz[1], max_xyz[0], max_xyz[1], min_xyz[2], max_xyz[2])
         asset.update(bv)
 
     # compute the identifier atrribute of the tile

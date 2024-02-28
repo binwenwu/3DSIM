@@ -2,20 +2,23 @@ import os
 from pathlib import Path
 from typing import Optional, Tuple
 
-from base.bounding_volume import BoundingVolume, InputBVType
-from base.type import Transform
+from parser.base.bounding_volume import BoundingVolume, InputBVType
+from parser.base.Transform import Transform
 from tools.render_range_convert import RangeMode, RangeConverter
 
 from base.base_3dsim import ThreeDSIMBase
 from rmdb_operations.sql_commonds import *
 from mongodb_operations.mongo_template import template_scene_asset, template_asset_edge, template_model_asset
 from mongodb_operations.mongodb import MongoDB
-from tools.query import Query
+from crud.query import Query
 
-from .tile3d_parser.tileset_parser.tileset import TileSet,Asset
-from .tile3d_parser.tileset_parser.tile import Tile
-from .tile3d_parser.tileset_parser.content import Content
-from .tile3d_parser.tileset_parser.contents import Contents
+from .base.tileset import TileSet,Asset
+from .base.tile import Tile
+from .base.content import Content
+from .base.contents import Contents
+
+
+
 
 from tools.utils import generate_short_hash
 from minio_operations.minio import get_endpoint_minio
@@ -51,7 +54,7 @@ class Parser3DTiles(ThreeDSIMBase):
         root_p = get_endpoint_minio()+ThreeDSIMBase.minio_client.bucket_name+'/'
 
         # for root tile
-        r_bv = BoundingVolume.convert_standardBV_to_3dtiles(sceneAsset['boundingVolume'])
+        r_bv = BoundingVolume.convert_standardBV_to_3dtilesBV(sceneAsset['boundingVolume'])
         r_transf = Transform.from_dict_worldT(sceneAsset).matrix
         root_tile = Tile(bounding_volume = r_bv, transform=r_transf)
         # get the childs 
@@ -59,7 +62,7 @@ class Parser3DTiles(ThreeDSIMBase):
         edge_scene, edge_model = self._classify_edges_by_type(edges)
         if len(edge_model) == 1:# for content and contents
             model = query.query_model_byID(edge_model[0]['toID'])[0]
-            c_bv = BoundingVolume.convert_standardBV_to_3dtiles(model['boundingVolume'])
+            c_bv = BoundingVolume.convert_standardBV_to_3dtilesBV(model['boundingVolume'])
             c_uri = root_p+model['instance']['filePath']
             # c_meta = model['adeOfMetadata']
             c_transf = Transform.from_dict(edge_model[0]).matrix
@@ -70,7 +73,7 @@ class Parser3DTiles(ThreeDSIMBase):
             contents = Contents()
             for edge in edge_model:
                 model = query.query_model_byID(edge['toID'])[0]
-                c_bv = BoundingVolume.convert_standardBV_to_3dtiles(model['boundingVolume'])
+                c_bv = BoundingVolume.convert_standardBV_to_3dtilesBV(model['boundingVolume'])
                 c_uri = root_p+model['instance']['filePath']
                 # c_meta = model['adeOfMetadata']
                 c_transf = Transform.from_dict(edge).matrix
@@ -102,7 +105,7 @@ class Parser3DTiles(ThreeDSIMBase):
         if edge["type"] != 1:
             raise ValueError("the edge type is not 1")
         scene = query.query_scene_byID(edge['toID'])[0]
-        s_bv = BoundingVolume.convert_standardBV_to_3dtiles(scene['boundingVolume'])
+        s_bv = BoundingVolume.convert_standardBV_to_3dtilesBV(scene['boundingVolume'])
         s_transf = Transform.from_dict(edge).matrix
         s_ge = edge['range']['renderRange']
 
@@ -119,7 +122,7 @@ class Parser3DTiles(ThreeDSIMBase):
         # for content and contents
         if len(edge_model) == 1:
             model = query.query_model_byID(edge_model[0]['toID'])[0]
-            c_bv = BoundingVolume.convert_standardBV_to_3dtiles(model['boundingVolume'])
+            c_bv = BoundingVolume.convert_standardBV_to_3dtilesBV(model['boundingVolume'])
             c_uri = root_p+ model['instance']['filePath']
             # c_meta = model['adeOfMetadata']
             c_transf = Transform.from_dict(edge_model[0]).matrix
@@ -131,7 +134,7 @@ class Parser3DTiles(ThreeDSIMBase):
             s_contents = Contents()
             for edge_m in edge_model:
                 model = query.query_model_byID(edge_m['toID'])[0]
-                c_bv = BoundingVolume.convert_standardBV_to_3dtiles(model['boundingVolume'])
+                c_bv = BoundingVolume.convert_standardBV_to_3dtilesBV(model['boundingVolume'])
                 c_uri = root_p+ model['instance']['filePath']
                 # c_meta = model['adeOfMetadata']
                 c_transf = Transform.from_dict(edge_m).matrix
@@ -320,7 +323,7 @@ class Parser3DTiles(ThreeDSIMBase):
 
     # compute sptatial dimension value
     def _compute_sptail_dimension_value(self, bv: dict) -> dict:
-        aabb = BoundingVolume.convert_to_AABB(bv) # convert to standard AABB
+        aabb = BoundingVolume.convert_standardBV_to_standardAABB(bv) # convert to standard AABB
         min_x, min_y, min_z, max_x, max_y, max_z = aabb["bv"]
         query_sql = f"""
         SELECT "gridCode" 
@@ -392,11 +395,11 @@ class Parser3DTiles(ThreeDSIMBase):
             boundingVolumeType = list(tile.bounding_volume.to_dict().keys())[0]
             boundingVolume = list(tile.bounding_volume.to_dict().values())[0] 
             if boundingVolumeType == "box":
-                return BoundingVolume.convert_to_standardBV(InputBVType.Box_3dtile, boundingVolume)
+                return BoundingVolume.convert_3dtilesBV_to_standardBV(InputBVType.Box_3dtile, boundingVolume)
             elif boundingVolumeType == "region":
-                return BoundingVolume.convert_to_standardBV(InputBVType.Region_3dtile,boundingVolume)
+                return BoundingVolume.convert_3dtilesBV_to_standardBV(InputBVType.Region_3dtile,boundingVolume)
             elif boundingVolumeType == "sphere":
-                return BoundingVolume.convert_to_standardBV(InputBVType.Sphere_3dtile,boundingVolume)
+                return BoundingVolume.convert_3dtilesBV_to_standardBV(InputBVType.Sphere_3dtile,boundingVolume)
             else:
                 raise Exception("boundingVolumeType is None.")
         else:
