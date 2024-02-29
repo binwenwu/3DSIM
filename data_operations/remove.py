@@ -104,9 +104,9 @@ class Remove(ThreeDSIMBase):
         return ThreeDSIMBase.mongodb_client.remove_documents("SceneEdge", query)
     
 
-    def delete_model_byID(self, model_id: ObjectId):
+    def remove_model_byID(self, model_id: ObjectId):
         """
-        Delete the model based on its ID.
+        Remove the model based on its ID.
         :param model_id: _id of the model to be deleted
         """
         query = {
@@ -115,9 +115,9 @@ class Remove(ThreeDSIMBase):
         ThreeDSIMBase.mongodb_client.remove_documents("3DModelFact", query)
 
     
-    def delete_scene_byID(self, scene_id: ObjectId):
+    def remove_scene_byID(self, scene_id: ObjectId):
         """
-        Delete the scene based on its ID.
+        Remove the scene based on its ID.
         :param scene_id: _id of the scene to be deleted
         """
         query = {

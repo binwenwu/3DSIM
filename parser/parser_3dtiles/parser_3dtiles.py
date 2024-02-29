@@ -5,12 +5,13 @@ from typing import Optional, Tuple
 from parser.base.bounding_volume import BoundingVolume, InputBVType
 from parser.base.Transform import Transform
 from tools.render_range_convert import RangeMode, RangeConverter
-
+from bson import ObjectId
 from base.base_3dsim import ThreeDSIMBase
 from rmdb_operations.sql_commonds import *
 from mongodb_operations.mongo_template import template_scene_asset, template_asset_edge, template_model_asset
 from mongodb_operations.mongodb import MongoDB
 from data_operations.query import Query
+from data_operations.remove import Remove
 
 from .base.tileset import TileSet,Asset
 from .base.tile import Tile
@@ -98,7 +99,7 @@ class Parser3DTiles(ThreeDSIMBase):
         tileset.geometric_error = root_tile.geometric_error
         tileset.write_as_json(Path(path))
         print(f"This 3dtiles have {self._counter_subscenes} sub scenes, and {self._counter_submodels} sub models")
-        pass
+
     
     def _get_tile(self, query:Query, edge:dict)->Tile:
         root_p = get_endpoint_minio()+ThreeDSIMBase.minio_client.bucket_name+'/'
@@ -154,8 +155,26 @@ class Parser3DTiles(ThreeDSIMBase):
             tile.children = s_children            
         return tile
     
-    def remove_data(self, data_item):
-        pass
+    def remove_data(self, scene_id:ObjectId, query:Query, remove:Remove) -> None:
+
+        edges = query.query_edges_of_scene(scene_id)
+        edge_scene, edge_model = self._classify_edges_by_type(edges)
+
+        if len(edge_scene) > 0:
+            for child_scene in edge_scene:
+                self.remove_data(ObjectId(child_scene['toID']),query,remove)
+        
+        if len(edge_model) > 0:
+            for child_model in edge_model:
+                remove.remove_model_byID(ObjectId(child_model['toID']))
+
+        remove.remove_scene_byID(scene_id)
+
+        for child_edge in edges:
+            remove.remove_edges_of_scene(ObjectId(child_edge['fromID']))
+
+
+                
 
     def search_data(self, search_query):
         pass
