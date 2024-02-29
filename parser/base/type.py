@@ -1,6 +1,11 @@
 import numpy as np
 from enum import Enum
 
+
+'''
+Unified type
+'''
+
 class BoundingVolumeType(Enum):
     AABB = "AABB"
     OBB = "OBB"

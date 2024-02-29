@@ -20,7 +20,11 @@ from typing import (
 if TYPE_CHECKING:
     from typing_extensions import NotRequired
 
-# Tileset types
+
+'''
+3DTiles type
+'''
+
 MetaDataType = Dict[str, Any]
 ExtensionDictType = Dict[str, Any]
 ExtraDictType = Dict[str, Any]
@@ -68,7 +72,7 @@ class ContentsType(RootPropertyDictType):
     content: list[ContentType]
 
 
-
+# TODO: Clearly identify the attributes
 class PropertyDictType:
     maximum: float
     minimum: float
@@ -101,51 +105,6 @@ class TilesetDictType(RootPropertyDictType):
 
 
 
-# TODO 以下参考py3dtiles
-# BatchTableDictType = Dict[str, Any]
-
-# # Tile content types
-
-# BatchTableHeaderDataType = Dict[str, Union[List[Any], Dict[str, Any]]]
-
-# FeatureTableHeaderDataType = Dict[
-#     str,
-#     Union[
-#         int,  # points_length
-#         Dict[str, int],  # byte offsets
-#         Tuple[float, float, float],  # rtc
-#         List[float],  # quantized_volume_offset and quantized_volume_scale
-#         Tuple[int, int, int, int],  # constant_rgba
-#     ],
-# ]
-
-
-# class HierarchyClassDictType(TypedDict):
-#     name: str
-#     length: int
-#     instances: dict[str, list[Any]]
-
-
-# # Tiler types
-
-# PortionItemType = Tuple[int, ...]
-# PortionsType = List[Tuple[str, PortionItemType]]
-
-
-# class MetadataReaderType(TypedDict):
-#     portions: PortionsType
-#     aabb: npt.NDArray[np.float64]
-#     crs_in: CRS | None
-#     point_count: int
-#     avg_min: npt.NDArray[np.float64]
-
-
-# OffsetScaleType = Tuple[
-#     npt.NDArray[np.float64],
-#     npt.NDArray[np.float64],
-#     Optional[npt.NDArray[np.float64]],
-#     Optional[float],
-# ]
 
 
 

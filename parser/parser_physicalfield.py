@@ -106,13 +106,13 @@ class ParserPhysicalField(ThreeDSIMBase):
         lon = file.select('Longitude').get()
         height = file.select('Height').get()
 
-        xmin, xmax = lon.min(), lon.max()
-        ymin, ymax = lat.min(), lat.max()
-        zmin, zmax = height.min(), height.max()
+        xmin, xmax = np.min(lon).item(), np.max(lon).item()
+        ymin, ymax = np.min(lat).item(), np.max(lat).item()
+        zmin, zmax = np.min(height).item(), np.max(height).item()
         
-        print(lat.max(),lat.min())
-        print(lon.max(),lon.min())
-        print(height.max(),height.min())
+        print(ymax,ymin)
+        print(xmax,xmin)
+        print(zmax,zmin)
 
         bv = BoundingVolume.convert_to_standardAABB(xmin, ymin, xmax, ymax, zmin, zmax)
         resolution_x, resolution_y = abs(float(lon[0][1] - lon[0][0])), abs(float(lat[1][0] - lat[0][0]))

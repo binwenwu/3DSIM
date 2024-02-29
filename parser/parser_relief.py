@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from typing import Optional, Tuple
 import rasterio
+from rasterio.warp import calculate_default_transform, reproject, Resampling
 import numpy as np
 import math
 
@@ -17,6 +18,38 @@ from mongodb_operations.mongodb import MongoDB
 
 from tools.utils import generate_short_hash
 from minio_operations.minio import get_endpoint_minio
+from osgeo import gdal
+
+
+def reproject_tif(src_path, dst_path, dst_crs='EPSG:4326'):
+    with rasterio.open(src_path) as src:
+        transform, width, height = calculate_default_transform(
+            src.crs, dst_crs, src.width, src.height, *src.bounds
+        )
+        kwargs = src.meta.copy()
+        kwargs.update({
+            'crs': dst_crs,
+            'transform': transform,
+            'width': width,
+            'height': height
+        })
+
+        with rasterio.open(dst_path, 'w', **kwargs) as dst:
+            for i in range(1, src.count + 1):
+                reproject(
+                    source=rasterio.band(src, i),
+                    destination=rasterio.band(dst, i),
+                    src_transform=src.transform,
+                    src_crs=src.crs,
+                    dst_transform=transform,
+                    dst_crs=dst_crs,
+                    resampling=Resampling.nearest
+                )
+
+
+
+# In EPSG 4378, the radius of the Earth is typically defined as the standard Earth radius, which is approximately 6378137 meters
+EATEH_RADIUS_EPSG4378 = 6378137
 
 class ParserRelief(ThreeDSIMBase):
     def __init__(self)-> None:
@@ -57,18 +90,21 @@ class ParserRelief(ThreeDSIMBase):
 
     def _read_geotiff(self, asset: dict)->None:
         with rasterio.open(self._uri) as src:
+            
             epsg = src.crs.to_epsg()
-            resolution_x = src.res[0]
+            # unit: degree
+            resolution_x = src.res[0] 
             resolution_y = src.res[1]
             bounds = src.bounds
+            
             if epsg == 4326:
                 # degree to meter
-                resolution_x = resolution_x * math.pi * 6378137 / 180
-                resolution_y = resolution_y * math.pi * 6378137 / 180
-                pass
+                resolution_x = resolution_x * math.pi * EATEH_RADIUS_EPSG4378 / 180
+                resolution_y = resolution_y * math.pi * EATEH_RADIUS_EPSG4378 / 180
             else:
                 print("the epsg is not supported currently, they need to be converted into 4326, next")
                 raise ValueError("the epsg is not supported currently")
+                
             band_data = src.read(1)  # read pixels
             max_value = np.max(band_data) # for max altitude and min altitude
             min_value = np.min(band_data)

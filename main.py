@@ -17,7 +17,7 @@ def main():
     # 2 for add raster relief
     # 3 for add physical field
     # 4 for add point cloud
-    mode = 3
+    mode = 1
     if mode == 1:
         p3d = Parser3DTiles()
         _3dtilesPath = "/home/program/3dsim/data/3dtiles/DA16_3D_Buildings/tileset.json"

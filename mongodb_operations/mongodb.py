@@ -10,8 +10,6 @@ class MongoDB:
         self._username = username
         self._password = password
         self._client = None
-        # @author:wbw
-        # `_db` 是 `MongoDB` 类的一个属性，用于存储连接到的 MongoDB 数据库的引用。
         self._db = None
         self.connect()
 
@@ -44,12 +42,12 @@ class MongoDB:
         except Exception as e:
             print("Failed to add document:", str(e))
 
-    def remove_document(self, collection_name, filter):
+    def remove_documents(self, collection_name, filter):
         try:
             collection = self._db[collection_name]
-            collection.delete_one(filter)
+            collection.delete_many(filter)
         except Exception as e:
-            print("Failed to remove document:", str(e))
+            print("Failed to remove documents:", str(e))
 
     def search_documents(self, collection_name, filter):
         try:
@@ -59,6 +57,13 @@ class MongoDB:
         except Exception as e:
             print("Failed to search documents:", str(e))
             return []
+        
+    def update_document(self, collection_name, filter, update_data):
+        try:
+            collection = self._db[collection_name]
+            collection.update_one(filter, {"$set": update_data})
+        except Exception as e:
+            print("Failed to update document:", str(e))
         
     def createDB(self):
         self._db = self._client[self._database]

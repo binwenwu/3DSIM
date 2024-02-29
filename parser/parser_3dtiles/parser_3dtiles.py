@@ -10,7 +10,7 @@ from base.base_3dsim import ThreeDSIMBase
 from rmdb_operations.sql_commonds import *
 from mongodb_operations.mongo_template import template_scene_asset, template_asset_edge, template_model_asset
 from mongodb_operations.mongodb import MongoDB
-from crud.query import Query
+from data_operations.query import Query
 
 from .base.tileset import TileSet,Asset
 from .base.tile import Tile
