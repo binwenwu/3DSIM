@@ -4,32 +4,30 @@ import time
 from datetime import date, timedelta
 from .sql_commonds import *
 
-"""
-@author:wbw
-pg数据库中维度表初始化
-"""
+
 class DimTableInitializer:
     def __init__(self, postgresql):
         self.postgresql = postgresql
 
-    # @author:wbw
-    # 初始化各个维度表，先创建字段，再创建索引，然后再初始化表内容
-    # 1.空间维度表
-    # 2.时间维度表
-    # 3.特征维度表
-    # 4.产品维度表
-    # 5.视点维度表
+
+    '''
+    Initialize various dimension tables, first create fields, then create indexes, and then initialize table contents
+    1. Spatial dimension table
+    2. Time dimension table
+    3. Feature dimension table
+    4. Product dimension table
+    5. Viewpoint dimension table
+    '''
     def do_initialize(self):
         if not self.postgresql.check_table_exists('SpatialDimension'):
             print("## Create spatial dimension tables...")
             # author:wbw
-            # 1. 创建空间维度表
-            # 2. 建立索引
+            # Create a spatial dimension table
+            # Establishing an index
             self.postgresql.execute_sql(sql_SpatialDimension)
             self.postgresql.execute_sql(sql_create_index_gridExtent)
             print("## Create spatial dimension tables done")
             # Spatial dimension initialization
-            # 3. 然后再初始化表内容
             sp_dim = SpatialDimInitializer(self.postgresql)
             print("##### Spatial dimension table initializing ...")
             start_time = time.time()
@@ -109,20 +107,15 @@ class SpatialDimInitializer:
         self.postgresql = postgresql
 
     def do_initialize(self):
-        # 将地球的经纬度剖分成长和宽接近2公里*2公里的网格，并对每个网格编码（即gridCode字段）
-        # ，将记录每个网格的空间范围（即gridExtent字段），并设置addressCode和addressName字段为空
-        # 之后将所有的网格导入SpatialDimension表格中
-        grid_size = 1  # 网格大小，单位为经纬度
+        grid_size = 1  # Grid size, measured in longitude and latitude
 
-        # 获取地球的经度范围和纬度范围
         min_lon, max_lon = -180, 180
         min_lat, max_lat = -90, 90
 
-        # 清空SpatialDimension表格
         clear_table_sql = "TRUNCATE TABLE public.\"SpatialDimension\";"
         self.postgresql.execute_sql(clear_table_sql)
 
-        # 生成网格数据
+        # Generate grid data
         grids = [
             (
                 f"{lon_index}_{lat_index}",
@@ -134,7 +127,7 @@ class SpatialDimInitializer:
             for lat_index in range(int((max_lat - min_lat) / grid_size))
         ]
 
-        # 批量插入网格数据
+        # Batch insertion of grid data
         insert_grid_sql = "INSERT INTO public.\"SpatialDimension\" (\"gridCode\", \"gridExtent\", \"addressCode\", \"addressName\") VALUES (%s, ST_GeomFromText(%s, 4326), %s, %s);"
         self.postgresql.execute_batch_sql(insert_grid_sql, grids)
 
@@ -144,18 +137,13 @@ class TimeDimInitializer:
         self.postgresql = postgresql
 
     def do_initialize(self):
-        # 将1900年1月1日-2100年1月1日之间的时间，按照1天为间隔
-        # 将每一天作为一条记录插入到TimeDimension表格中
-        # 该表格的字段有：timeCode、year、month、day
         start_date = date(1900, 1, 1)
         end_date = date(2100, 1, 1)
         delta = timedelta(days=1)
 
-        # 清空TimeDimension表格
         clear_table_sql = "TRUNCATE TABLE public.\"TimeDimension\";"
         self.postgresql.execute_sql(clear_table_sql)
 
-        # 生成时间数据
         data = []
         current_date = start_date
         while current_date < end_date:
@@ -170,7 +158,6 @@ class TimeDimInitializer:
 
             current_date += delta
 
-        # 处理剩余的数据
         if data:
             insert_time_sql = "INSERT INTO public.\"TimeDimension\" (\"timeCode\", \"year\", \"month\", \"day\") VALUES (%s, %s, %s, %s);"
             self.postgresql.execute_batch_sql(insert_time_sql, data)

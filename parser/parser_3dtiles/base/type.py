@@ -85,6 +85,7 @@ class AssetDictType(RootPropertyDictType):
 
 
 
+
 class TileDictType(RootPropertyDictType):
     boundingVolume: BoundingVolumeDictType
     geometricError: GeometricErrorType

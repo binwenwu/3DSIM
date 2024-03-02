@@ -83,7 +83,7 @@ class Tile(RootProperty[TileDictType]):
         elif "contents" in tile_dict:
             tile.contents = Contents.from_dict(tile_dict["contents"])
 
-        tile.set_properties_from_dict(tile_dict, metadataPath)
+        tile.set_root_properties_from_dict(tile_dict, metadataPath)
 
         return tile
 

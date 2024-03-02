@@ -49,8 +49,6 @@ class ThreeDSIMBase(ABC):
     def _connect_postgresql(self, database: str = None, user: str = "postgres", password: str = None,
                            host: str = "127.0.0.1", port: str = "5432") -> None:
         if ThreeDSIMBase.postgres is None:
-             # @auther:wbw 
-             # 先获取连接，再初始化维度表
             ThreeDSIMBase.postgres = PostgreSQL(database=database, user=user, password=password, host=host, port=port)
             initializer = DimTableInitializer(ThreeDSIMBase.postgres)  # initialize all dimension tables
             initializer.do_initialize()

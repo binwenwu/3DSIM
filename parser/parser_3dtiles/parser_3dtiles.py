@@ -13,11 +13,11 @@ from mongodb_operations.mongodb import MongoDB
 from data_operations.query import Query
 from data_operations.remove import Remove
 
-from .base.tileset import TileSet,Asset
+from .base.tileset import TileSet
+from .base.asset import Asset
 from .base.tile import Tile
 from .base.content import Content
 from .base.contents import Contents
-
 
 
 
@@ -60,7 +60,7 @@ class Parser3DTiles(ThreeDSIMBase):
         root_tile = Tile(bounding_volume = r_bv, transform=r_transf)
         # get the childs 
         edges = query.query_edges_of_scene(sceneAsset['_id'])
-        edge_scene, edge_model = self._classify_edges_by_type(edges)
+        edge_scene, edge_model = self._classify_edges_by_type(edges) # Classify child nodes
         if len(edge_model) == 1:# for content and contents
             model = query.query_model_byID(edge_model[0]['toID'])[0]
             c_bv = BoundingVolume.convert_standardBV_to_3dtilesBV(model['boundingVolume'])
@@ -86,8 +86,8 @@ class Parser3DTiles(ThreeDSIMBase):
         if len(edge_scene) != 0:# for children
             children = []
             for edge in edge_scene:
-                til = self._get_tile(query=query, edge=edge)
-                children.append(til)
+                tile = self._get_tile(query=query, edge=edge)
+                children.append(tile)
                 self._counter_subscenes +=1
             root_tile.children = children
 
@@ -157,17 +157,15 @@ class Parser3DTiles(ThreeDSIMBase):
     
     def remove_data(self, scene_id:ObjectId, query:Query, remove:Remove) -> None:
 
-        edges = query.query_edges_of_scene(scene_id)
-        edge_scene, edge_model = self._classify_edges_by_type(edges)
+        edges = query.query_edges_of_scene(scene_id) # Query child nodes
+        edge_scene, edge_model = self._classify_edges_by_type(edges) # Classification of child node types
 
-        if len(edge_scene) > 0:
-            for child_scene in edge_scene:
+        for child_scene in edge_scene:
                 self.remove_data(ObjectId(child_scene['toID']),query,remove)
         
-        if len(edge_model) > 0:
-            for child_model in edge_model:
+        for child_model in edge_model:
                 remove.remove_model_byID(ObjectId(child_model['toID']))
-
+        
         remove.remove_scene_byID(scene_id)
 
         for child_edge in edges:
@@ -343,7 +341,7 @@ class Parser3DTiles(ThreeDSIMBase):
     # compute sptatial dimension value
     def _compute_sptail_dimension_value(self, bv: dict) -> dict:
         aabb = BoundingVolume.convert_standardBV_to_standardAABB(bv) # convert to standard AABB
-        min_x, min_y, min_z, max_x, max_y, max_z = aabb["bv"]
+        min_x, min_y, min_z, max_x, max_y, max_z = aabb["boundingVolume"]["bv"]
         query_sql = f"""
         SELECT "gridCode" 
         FROM public."SpatialDimension" 
@@ -455,7 +453,7 @@ class Parser3DTiles(ThreeDSIMBase):
         if isRoot:
             genericName = parent_folder+"_"+self._featureType #order: filePath -> name in metadata
             if self._check_dict_field(adeOfMetadata, 'feature'):
-                pass  # TODO 是不是要用数据自带的feature字段替代用户输出的featureType？
+                pass  
             return {
                 "genericName": genericName
             }

@@ -31,8 +31,7 @@ class BoundingVolumeSphere(BoundingVolume[BoundingVolumeSphereDictType]):
     def from_dict(cls, bounding_volume_sphere_dict: BoundingVolumeSphereDictType) -> Self:
         bounding_volume_sphere = cls()
         bounding_volume_sphere.set_from_list(bounding_volume_sphere_dict["sphere"])
-
-        bounding_volume_sphere.set_properties_from_dict(bounding_volume_sphere_dict)
+        bounding_volume_sphere.set_root_properties_from_dict(bounding_volume_sphere_dict)
 
         return bounding_volume_sphere
 

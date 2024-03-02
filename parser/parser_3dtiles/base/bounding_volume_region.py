@@ -32,8 +32,7 @@ class BoundingVolumeRegion(BoundingVolume[BoundingVolumeRegionDictType]):
     def from_dict(cls, bounding_volume_region_dict: BoundingVolumeRegionDictType) -> Self:
         bounding_volume_region = cls()
         bounding_volume_region.set_from_list(bounding_volume_region_dict["region"])
-
-        bounding_volume_region.set_properties_from_dict(bounding_volume_region_dict)
+        bounding_volume_region.set_root_properties_from_dict(bounding_volume_region_dict)
 
         return bounding_volume_region
     

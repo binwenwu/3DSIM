@@ -38,7 +38,7 @@ class BoundingVolumeBox(BoundingVolume[BoundingVolumeBoxDictType]):
     def from_dict(cls, bounding_volume_box_dict: BoundingVolumeBoxDictType) -> Self:
         bounding_volume_box = cls()
         bounding_volume_box.set_from_list(bounding_volume_box_dict["box"])
-        bounding_volume_box.set_properties_from_dict(bounding_volume_box_dict)
+        bounding_volume_box.set_root_properties_from_dict(bounding_volume_box_dict)
 
         return bounding_volume_box
     

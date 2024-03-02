@@ -16,11 +16,18 @@ class RangeMode(Enum):
     PIXEL_SIZE_ON_SCREEN  = "PIXEL"
     GEOMETRIC_ERROR = "GE"
 
+
+class SceneAsset(Enum):
+    CITYGML = "CITYGML"
+    _3DTILES = "_3DTILES"
+    OSG = "OSG"
+    I3S = "I3S"
+
 class ModelAsset(Enum):
     POINTCLOUD = "POINTCLOUD"
     PHYSICALFIELD  = "PHYSICALFIELD"
     RASTERRELIEF = "RASTERRELIEF"
-    MESH = "MESH"
+    MESH = "3DMESH"
 
 class ReliefType(Enum):
     GEOTIFF = "GEOTIFF"

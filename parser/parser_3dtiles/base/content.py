@@ -55,7 +55,7 @@ class Content(RootProperty[ContentType]):
         if "transform" in content_dict:
             content.transform = np.array(content_dict["transform"]).reshape((4, 4))
 
-        content.set_properties_from_dict(content_dict, metadataPath)
+        content.set_root_properties_from_dict(content_dict, metadataPath)
 
         return content
     
@@ -84,9 +84,9 @@ class Content(RootProperty[ContentType]):
         if boundingVolume_dict is not None:
             str_list = [value for value in boundingVolume_dict.values()]
             if str_list[0] is not None:
-                # 删除大括号
+                # Remove curly braces
                 str_list = str_list[0].strip('{}')
-                # 使用逗号分隔字符串，并将数字字符串转换为浮点数
+                # Separate strings with commas and convert numeric strings to floating-point numbers
                 float_list = [float(x) for x in str_list.split(',')]
 
                 boundingVolumeDictKeys = [value for value in boundingVolume_dict.keys()][0]
@@ -104,10 +104,10 @@ class Content(RootProperty[ContentType]):
                 return bounding_volume
             
     def strToTransformMatrix(self,strTransformMatrix):
-        # 去掉大括号和逗号
+        # Remove curly braces and commas
         if strTransformMatrix != 'None':
             strTransformMatrix.replace('{', '').replace('}', '').replace(',', '')
-            # 使用 fromstring() 函数将字符串转换为一维数组
+            # Convert a string to a one-dimensional array using the freestring() function
             arr = np.fromstring(strTransformMatrix, sep=' ')
 
             return arr

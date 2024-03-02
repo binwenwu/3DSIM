@@ -67,7 +67,9 @@ class BoundingVolume:
     def convert_standardBV_to_standardAABB(input: dict) -> dict:
         bv = input["boundingVolume"]
         if bv["type"] == BoundingVolumeType.AABB.value:
-            return bv
+            return {
+                "boundingVolume": bv
+            }
         elif bv["type"] == BoundingVolumeType.OBB.value:
             obb_data = bv["bv"]
             center = obb_data[:3]

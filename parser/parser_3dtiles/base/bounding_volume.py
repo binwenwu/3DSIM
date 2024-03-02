@@ -29,9 +29,9 @@ _BoundingVolumeJsonDictT = TypeVar(
     BoundingVolumeSphereDictType,
 )
 
-#****************************
-#   boundingVolume基类
-#****************************
+#*****************************
+#   boundingVolume base class
+#*****************************
 class BoundingVolume(
     RootProperty[_BoundingVolumeJsonDictT], Generic[_BoundingVolumeJsonDictT]
 ): 

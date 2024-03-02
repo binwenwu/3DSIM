@@ -75,5 +75,5 @@ result = query.query_rootSceneAsset(self,
          feature: list[str] = ['Building'], 
          viewedRange: list[float] = [0,9999999])
 p3d = Parser3DTiles()
-p3d.save_data_to3dtiles(sceneAsset=result[0], path='./tilese1',query=query)
+p3d.save_data_to3dtiles(sceneAsset=result[0], path='./tileset.json',query=query)
 ```                

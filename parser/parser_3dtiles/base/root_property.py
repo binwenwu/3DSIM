@@ -55,7 +55,7 @@ class RootProperty(ABC, Generic[_JsonDictT]):
 
         return dict_data
 
-    def set_properties_from_dict(
+    def set_root_properties_from_dict(
         self,
         dict_data: _JsonDictT,
         filePath: str | None = None
