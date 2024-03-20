@@ -20,9 +20,9 @@ def main():
     mode = 1
     if mode == 1:
         p3d = Parser3DTiles()
-        _3dtilesPath = "/home/program/3dsim/data/3dtiles/New-York-Manhattan-Buildings-3D-Tiles-WGS84-Quadtree-Level-14/tileset.json"
+        # _3dtilesPath = "/home/program/3dsim/data/3dtiles/New-York-Manhattan-Buildings-3D-Tiles-WGS84-Quadtree-Level-14/tileset.json"
         # _3dtilesPath = "/home/program/3dsim/data/3dtiles/DA16_3D_Buildings/tileset.json"
-        # _3dtilesPath = "/home/program/3dsim/data/3dtiles/白膜-武汉建筑/tileset.json"
+        _3dtilesPath = "/home/program/3dsim/data/3dtiles/白膜-武汉建筑/tileset.json"
         p3d.add_data(_3dtilesPath,featureType='Building',createTime='20230116', validTime=['19950923', '20050101'])
     if mode == 2:
         pr = ParserRelief()
@@ -49,4 +49,4 @@ if __name__ == "__main__":
     main()
     end_time = time.time()
     execution_time_ms = (end_time - start_time) * 1000
-    print(f"代码执行时间：{execution_time_ms:.2f}毫秒")
+    print(f"Code execution time:{execution_time_ms:.2f}ms")

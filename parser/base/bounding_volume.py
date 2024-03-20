@@ -7,9 +7,9 @@ from math import pi
 from .type import BoundingVolumeType
 
 class InputBVType(Enum):
-    Box_3dtile = "Box_3dtile"
-    Region_3dtile = "Region_3dtile"
-    Sphere_3dtile = "Sphere_3dtile"
+    Box_3dtiles = "Box_3dtiles"
+    Region_3dtiles = "Region_3dtiles"
+    Sphere_3dtiles = "Sphere_3dtiles"
 
 class BoundingVolume:
     def __init__(self):
@@ -18,11 +18,11 @@ class BoundingVolume:
     # Convert the bounding box type in 3dtiles to a standard bounding box type
     @staticmethod
     def convert_3dtilesBV_to_standardBV(input_bv_type: InputBVType, bv_data: list) -> dict:
-        if input_bv_type == InputBVType.Box_3dtile:
+        if input_bv_type == InputBVType.Box_3dtiles:
             return BoundingVolume._convert_box_to_obb(bv_data)
-        elif input_bv_type == InputBVType.Region_3dtile:
+        elif input_bv_type == InputBVType.Region_3dtiles:
             return BoundingVolume._convert_region_to_aabb(bv_data)
-        elif input_bv_type == InputBVType.Sphere_3dtile:
+        elif input_bv_type == InputBVType.Sphere_3dtiles:
             return BoundingVolume._convert_sphere_to_sphere(bv_data)        
         else:
             raise ValueError("Unsupported Bounding Volume Type.")

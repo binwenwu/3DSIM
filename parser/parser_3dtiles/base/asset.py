@@ -16,12 +16,12 @@ if TYPE_CHECKING:
 #*****************************************
 class Asset(RootProperty[AssetDictType]):
     def __init__(
-        self, version: Literal["1.0", "1.1"] = "1.0", tileset_version: str | None = None, metadataUri: Path | None = None
+        self, version: Literal["1.0", "1.1"] = "1.0", tileset_version: str | None = None, metadataPath: Path | None = None
     ) -> None:
         super().__init__()
         self.version = version
         self.tileset_version = tileset_version
-        self.adeOfMetadata = metadataUri
+        self.adeOfMetadata = metadataPath
 
     @classmethod
     # Read asset attribute information from the dictionary

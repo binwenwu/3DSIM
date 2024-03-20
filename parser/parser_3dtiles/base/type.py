@@ -21,9 +21,6 @@ if TYPE_CHECKING:
     from typing_extensions import NotRequired
 
 
-'''
-3DTiles type
-'''
 
 MetaDataType = Dict[str, Any]
 ExtensionDictType = Dict[str, Any]
@@ -62,7 +59,7 @@ BoundingVolumeDictType = Union[
 
 class ContentType(RootPropertyDictType):
     boundingVolume: NotRequired[BoundingVolumeDictType]
-    transform: NotRequired[TransformDictType]
+    # transform: NotRequired[TransformDictType]
     uri: str
 
 
@@ -72,7 +69,6 @@ class ContentsType(RootPropertyDictType):
     content: list[ContentType]
 
 
-# TODO: Clearly identify the attributes
 class PropertyDictType:
     maximum: float
     minimum: float

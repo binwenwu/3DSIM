@@ -6,7 +6,7 @@ from rasterio.warp import calculate_default_transform, reproject, Resampling
 import numpy as np
 import math
 
-from .base.bounding_volume import BoundingVolume, InputBVType
+from .base.bounding_volume import BoundingVolume
 from .base.Transform import Transform
 from .base.type import ModelAsset, ReliefType
 from tools.render_range_convert import RangeMode, RangeConverter
@@ -132,7 +132,7 @@ class ParserRelief(ThreeDSIMBase):
 
     # compute all of the dimension value of the tile
     def _compute_dimension_value(self, asset: dict)->None:
-        spatialDV = self._compute_sptail_dimension_value(asset["boundingVolume"])# get the spatial dimension value
+        spatialDV = self._compute_spatial_dimension_value(asset["boundingVolume"])# get the spatial dimension value
         asset.update(spatialDV)
         prodcutDV = self._compute_product_dimension_value()# get the product dimension value
         asset.update(prodcutDV)
@@ -144,7 +144,7 @@ class ParserRelief(ThreeDSIMBase):
         asset.update(viewpointDV)
 
     # compute sptatial dimension value
-    def _compute_sptail_dimension_value(self, aabb: dict) -> dict:
+    def _compute_spatial_dimension_value(self, aabb: dict) -> dict:
         min_x, min_y, min_z, max_x, max_y, max_z = aabb["bv"]
         query_sql = f"""
         SELECT "gridCode" 

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING
-
+from typing import TYPE_CHECKING, Tuple
+from base.base_3dsim import ThreeDSIMBase
 from .type import GeometricErrorType, TilesetDictType
 from .root_property import RootProperty
 from .tile import Tile
@@ -20,8 +20,8 @@ class TileSet(RootProperty[TilesetDictType]):
     def __init__(
         self,
         geometric_error: float = 500,
-        root_uri: Path | None = None,
-        metadataUri :Path | None = None
+        root_uri: Path | None = None, # The path where tileset.json is located
+        metadataPath :Path | None = None
     ) -> None:
         super().__init__()
         self.asset = Asset(version="1.0")
@@ -30,17 +30,20 @@ class TileSet(RootProperty[TilesetDictType]):
         self.root_uri = root_uri
         self.extensions_used: set[str] = set()
         self.extensions_required: set[str] = set()
-        self.adeOfMetadata = metadataUri
+        self.adeOfMetadata = metadataPath
 
     @staticmethod
-    def from_file(tileset_path: Path) -> TileSet:
+    def from_file(tileset_path: Path) -> Tuple[dict,TileSet]:
         with tileset_path.open() as f:
             tileset_dict = json.load(f)
 
-        tileset = TileSet.from_dict(tileset_dict, tileset_path)
-        tileset.root_uri = tileset_path.parent
+        tileset_dict = TileSet.add_ids(tileset_dict) # Add _id to tiles
 
-        return tileset
+        tileset = TileSet.from_dict(tileset_dict, tileset_path)
+        tileset.root_uri = tileset_path.parent # The path where tileset.json is located
+
+        return tileset_dict,tileset
+
     
     @classmethod
     # Read tileset related properties from the dictionary
@@ -58,10 +61,6 @@ class TileSet(RootProperty[TilesetDictType]):
         # Set the root properties of the tileset
         tileset.set_root_properties_from_dict(tileset_dict, metadataPath)
 
-        # TODO
-        # if "extras" in tileset_dict:
-        #     tileset.extras = tileset_dict["extras"]
-
         if "extensionsUsed" in tileset_dict:
             tileset.extensions_used = set(tileset_dict["extensionsUsed"])
 
@@ -69,6 +68,28 @@ class TileSet(RootProperty[TilesetDictType]):
             tileset.extensions_required = set(tileset_dict["extensionsRequired"])
 
         return tileset
+    
+
+    
+    @staticmethod
+    # Add _id to tiles
+    def add_ids(tileset_dict):
+        def add_id_recursive(node) -> None:
+            if isinstance(node, dict):
+                if "extras" not in node:
+                    node["extras"] = {}
+                node["extras"]["_id"] = ThreeDSIMBase.mongodb_client.getObjectId()
+                if "children" in node:
+                    for child in node["children"]:
+                        add_id_recursive(child)
+        if "root" in tileset_dict:
+            add_id_recursive(tileset_dict["root"])
+            if "extras" not in tileset_dict["root"]:
+                tileset_dict["root"]["extras"] = {}
+            tileset_dict["root"]["extras"]["_id"] = ThreeDSIMBase.mongodb_client.getObjectId()
+        return tileset_dict
+
+
     
 
     def to_dict(self) -> TilesetDictType:
@@ -86,10 +107,10 @@ class TileSet(RootProperty[TilesetDictType]):
 
         tileset_dict = self.add_root_properties_to_dict(tileset_dict, self.adeOfMetadata)
 
-        # if self.extensions_used:
-        #     tileset_dict["extensionsUsed"] = list(self.extensions_used)
-        # if self.extensions_required:
-        #     tileset_dict["extensionsRequired"] = list(self.extensions_required)
+        if self.extensions_used:
+            tileset_dict["extensionsUsed"] = list(self.extensions_used)
+        if self.extensions_required:
+            tileset_dict["extensionsRequired"] = list(self.extensions_required)
 
         return tileset_dict
 

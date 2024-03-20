@@ -1,11 +1,6 @@
 import numpy as np
 from enum import Enum
 
-
-'''
-Unified type
-'''
-
 class BoundingVolumeType(Enum):
     AABB = "AABB"
     OBB = "OBB"
@@ -45,6 +40,6 @@ class PhysicalFieldType(Enum):
 
 class Mesh3DType(Enum):
     GLTF = "GLTF"
-    GLB = "PLY"
+    GLB = "GLB"
     FBX = "FBX"
 

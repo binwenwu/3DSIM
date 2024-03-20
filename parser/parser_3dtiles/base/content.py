@@ -19,13 +19,13 @@ DEFAULT_TRANSFORMATION.setflags(write=False)
 class Content(RootProperty[ContentType]):
     def __init__(self,
                  bounding_volume: BoundingVolume[Any] | None = None,
-                 transform: npt.NDArray[np.float64] | None = None,
+                #  transform: npt.NDArray[np.float64] | None = None,
                  content_uri: Path | None = None,
                  metadataPath: Path | None = None
                  ) -> None:
         super().__init__()
         self.bounding_volume = bounding_volume
-        self.transform = transform
+        # self.transform = transform
         self.content_uri: Path | None = content_uri
         self.adeOfMetadata: Path | None = metadataPath
 
@@ -52,8 +52,8 @@ class Content(RootProperty[ContentType]):
         if "metadata" in content_dict:
             content.adeOfMetadata = metadataPath
 
-        if "transform" in content_dict:
-            content.transform = np.array(content_dict["transform"]).reshape((4, 4))
+        # if "transform" in content_dict:
+        #     content.transform = np.array(content_dict["transform"]).reshape((4, 4))
 
         content.set_root_properties_from_dict(content_dict, metadataPath)
 
@@ -66,12 +66,12 @@ class Content(RootProperty[ContentType]):
             if bounding_volume is not None:
                 dict_data["boundingVolume"] = bounding_volume
 
-        if (
-            self.transform is not None and self.transform is not DEFAULT_TRANSFORMATION
-        ):
-            self.transform = self.strToTransformMatrix(self.transform)
-            if self.transform.size != 0:
-                dict_data["transform"] = list(self.transform.flatten())
+        # if (
+        #     self.transform is not None and self.transform is not DEFAULT_TRANSFORMATION
+        # ):
+        #     self.transform = self.strToTransformMatrix(self.transform)
+        #     if self.transform.size != 0:
+        #         dict_data["transform"] = list(self.transform.flatten())
 
         if self.content_uri is not None:
             dict_data["uri"] = self.content_uri

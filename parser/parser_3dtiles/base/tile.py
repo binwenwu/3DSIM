@@ -33,7 +33,7 @@ class Tile(RootProperty[TileDictType]):
         bounding_volume: BoundingVolume[Any] | None = None,
         transform: npt.NDArray[np.float64] = DEFAULT_TRANSFORMATION,
         refine_mode: RefineType = "ADD",
-        metadataUri: Path | None = None,
+        metadataPath: Path | None = None,
         # content_uri: Path | None = None,
     ) -> None:
         super().__init__()
@@ -45,7 +45,7 @@ class Tile(RootProperty[TileDictType]):
         self.contents: Contents | None = None
         self.children: list[Tile] = []
         self.transform = transform
-        self.adeOfMetadata = metadataUri
+        self.adeOfMetadata = metadataPath
         # self.content_uri: Path | None = content_uri
 
     @classmethod
@@ -76,8 +76,7 @@ class Tile(RootProperty[TileDictType]):
         if "children" in tile_dict:
             for child in tile_dict["children"]:
                 tile.children.append(Tile.from_dict(child))
-
-        if "content" in tile_dict:
+        elif "content" in tile_dict:
             tile.content = Content.from_dict(tile_dict["content"])
             # tile.content_uri = Path(tile_dict["content"]["uri"])
         elif "contents" in tile_dict:
