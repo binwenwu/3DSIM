@@ -78,15 +78,20 @@ class TileSet(RootProperty[TilesetDictType]):
             if isinstance(node, dict):
                 if "extras" not in node:
                     node["extras"] = {}
-                node["extras"]["_id"] = ThreeDSIMBase.mongodb_client.getObjectId()
+                node["extras"]["3dsim_id"] = str(ThreeDSIMBase.mongodb_client.getObjectId())
                 if "children" in node:
                     for child in node["children"]:
                         add_id_recursive(child)
+                elif "content" in node:
+                    add_id_recursive(node["content"])
+                elif "contents" in node:
+                    for content in node["contents"]:
+                        add_id_recursive(content)
+        if "extras" not in tileset_dict:
+            tileset_dict["extras"] = {}
+        tileset_dict["extras"]["3dsim_id"] = str(ThreeDSIMBase.mongodb_client.getObjectId())
         if "root" in tileset_dict:
             add_id_recursive(tileset_dict["root"])
-            if "extras" not in tileset_dict["root"]:
-                tileset_dict["root"]["extras"] = {}
-            tileset_dict["root"]["extras"]["_id"] = ThreeDSIMBase.mongodb_client.getObjectId()
         return tileset_dict
 
 

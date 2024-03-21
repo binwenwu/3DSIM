@@ -73,5 +73,25 @@ class MinioClient:
             print(f"File '{object_name}' uploaded to '{self.bucket_name}'")
         except S3Error as e:
             print("Error:", e)
+    
+    
+    def upload_folder(self, folder_path, prefix=None):
+        try:
+            if not self.minio_client:
+                raise ValueError("Not connected to MinIO.")
+            
+            folder_path = os.path.abspath(folder_path)
+            for root, dirs, files in os.walk(folder_path):
+                for file_name in files:
+                    file_path = os.path.join(root, file_name)
+                    if prefix:
+                        object_name = os.path.join(prefix, os.path.relpath(file_path, folder_path))
+                    else:
+                        object_name = os.path.relpath(file_path, folder_path)
+                    self.upload_file(file_path, object_name)
+                    
+            print(f"Folder '{folder_path}' uploaded to '{self.bucket_name}'")
+        except S3Error as e:
+            print("Error:", e)
 
 

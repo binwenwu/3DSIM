@@ -7,18 +7,18 @@ from .type import ContentsType
 class Contents(RootProperty[ContentsType]):
     def __init__(self) -> None:
         super().__init__()
-        self.content: list[Content] = []
+        self.contents: list[Content] = []
 
     @classmethod
     def from_dict(cls, contents_dict: ContentsType) -> Contents:            
         contents = cls()
         for content in contents_dict:
             content = Content.from_dict(content)
-            contents.content.append(content)
+            contents.contents.append(content)
         return contents
     
     def to_dict(self) -> ContentsType:
         dict_data: list=[]
-        for content in self.content:
+        for content in self.contents:
             dict_data.append(content.to_dict())
         return dict_data
