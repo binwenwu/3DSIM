@@ -78,14 +78,14 @@ class ParserRelief(ThreeDSIMBase):
             self._read_geotiff(reliefAsset)
         else:
             raise ValueError("the relief type is not supported currently")
-         
+        
         identifier = self._compute_identifier_value()
         reliefAsset.update(identifier)
         self._compute_dimension_value(reliefAsset)
         self._compute_attributes_value(reliefAsset)
         
         ThreeDSIMBase.mongodb_client.add_document("3DModelFact",reliefAsset)
-        print(reliefAsset)
+        print("reliefAsset",reliefAsset)
 
 
     def _read_geotiff(self, asset: dict)->None:

@@ -2,28 +2,23 @@ import math
 from parser.base.type import RangeMode
 
 class RangeConverter:
+
     @staticmethod
-    def convert(value: float, mode_from: RangeMode, mode_to: RangeMode, bv_radius: float=0) -> float:
-        if mode_from == RangeMode.DISTANCE_FROM_EYE_POINT and mode_to == RangeMode.PIXEL_SIZE_ON_SCREEN:
-            if bv_radius != 0:
-                return RangeConverter.distance_to_pixel(value)
-            else:
-                raise(Exception("bv_radiu is 0"))
-        elif mode_from == RangeMode.PIXEL_SIZE_ON_SCREEN and mode_to == RangeMode.DISTANCE_FROM_EYE_POINT:
-            if bv_radius !=0:
-                return RangeConverter.pixel_to_distance(value)
-            else:
-                raise(Exception("bv_radiu is 0"))
-        elif mode_from == RangeMode.DISTANCE_FROM_EYE_POINT and mode_to == RangeMode.GEOMETRIC_ERROR:
-            return RangeConverter.distance_to_geometric_error(value)
-        elif mode_from == RangeMode.GEOMETRIC_ERROR and mode_to == RangeMode.DISTANCE_FROM_EYE_POINT:
-            return RangeConverter.geometric_error_to_distance(value)
-        elif mode_from == RangeMode.PIXEL_SIZE_ON_SCREEN and mode_to == RangeMode.GEOMETRIC_ERROR:
-            return RangeConverter.pixel_to_geometric_error(value)
-        elif mode_from == RangeMode.GEOMETRIC_ERROR and mode_to == RangeMode.PIXEL_SIZE_ON_SCREEN:
-            return RangeConverter.geometric_error_to_pixel(value)
+    def convert(value: float, mode_from: RangeMode, mode_to: RangeMode) -> float:
+        conversion_functions = {
+            (RangeMode.DISTANCE_FROM_EYE_POINT, RangeMode.PIXEL_SIZE_ON_SCREEN): RangeConverter.distance_to_pixel,
+            (RangeMode.PIXEL_SIZE_ON_SCREEN, RangeMode.DISTANCE_FROM_EYE_POINT): RangeConverter.pixel_to_distance,
+            (RangeMode.DISTANCE_FROM_EYE_POINT, RangeMode.GEOMETRIC_ERROR): RangeConverter.distance_to_geometric_error,
+            (RangeMode.GEOMETRIC_ERROR, RangeMode.DISTANCE_FROM_EYE_POINT): RangeConverter.geometric_error_to_distance,
+            (RangeMode.PIXEL_SIZE_ON_SCREEN, RangeMode.GEOMETRIC_ERROR): RangeConverter.pixel_to_geometric_error,
+            (RangeMode.GEOMETRIC_ERROR, RangeMode.PIXEL_SIZE_ON_SCREEN): RangeConverter.geometric_error_to_pixel,
+        }
+        conversion_function = conversion_functions.get((mode_from, mode_to))
+        if conversion_function:
+            return conversion_function(value)
         else:
             return value  # Return the input value if no conversion is needed
+        
 
     @staticmethod
     def distance_to_pixel(distance: float, boundvolume_radius:float) -> float:
@@ -37,6 +32,7 @@ class RangeConverter:
         viewPortHeight = 1080
         return RangeConverter._pixel_size_to_distance(pixelSize=pixel, boundvolume_radius= boundvolume_radius, fov=fov, viewPortHeight=viewPortHeight)
 
+    
     @staticmethod
     def distance_to_geometric_error(distance: float) -> float:
         """
@@ -44,7 +40,7 @@ class RangeConverter:
             An empricial method that convert geometric_error to distance
             assumption: Screen height = 1080; maximumScreenSpaceError = 16
         """
-        return distance*0.56291651245*16/936
+        return distance * 0.5629165124598852 * 16 / 936 
 
     @staticmethod
     def geometric_error_to_distance(geometric_error: float) -> float:
@@ -53,7 +49,7 @@ class RangeConverter:
             An empricial method that convert geometric_error to distance
             assumption: Screen height = 1080; maximumScreenSpaceError = 16
         """
-        return geometric_error*936/16/0.56291651245
+        return geometric_error * 936 / 16 / 0.5629165124598852
 
     @staticmethod
     def pixel_to_geometric_error(pixel: float) -> float:

@@ -5,10 +5,10 @@ from base.base_3dsim import ThreeDSIMBase
 
 class Query(ThreeDSIMBase):
 
-    def query_rootSceneAsset(self, product: list[str]=['3DTiles','CityGML','OSG', 'I3S'], 
+    def query_sceneAsset(self, product: list[str]=['3DTiles','CityGML','OSG', 'I3S'], 
                              spatialExtent: list[float] = [-180, -90, 180, 90],
                              timeSpan: list[str] = ['19000101', '20990101'], 
-                             feature: list[str] = ['Building'], viewedRange: list[float] = [0,9999999]) -> list:
+                             feature: list[str] = ['Building'], viewedRange: list[float] = [0,9999999],isRoot:bool=False) -> list:
         """
         Query the root scene asset such as 3DTiles, CityGML, OSG, I3S
         :param product: product name list,
@@ -28,15 +28,22 @@ class Query(ThreeDSIMBase):
 
         if not pro_id:
             raise ValueError("product list is none.")
-        filtered_pro_id = [item for item in pro_id if item.startswith('1')]
-        
-        query = {
-            "productDimension": {"$in": filtered_pro_id},
-            "featureDimension": {"$in": list_feature},
-            "viewpointDimension": {"$in": list_viewpoint},
-            "timeDimension": {"$in": list_time},
-            "spatialDimension":  {"$in": list_spatial}
-        }
+        if isRoot:
+            filtered_pro_id = [item for item in pro_id if item.startswith('1')]
+            query = {
+                "productDimension": {"$in": filtered_pro_id},
+                "featureDimension": {"$in": list_feature},
+                "viewpointDimension": {"$in": list_viewpoint},
+                "timeDimension": {"$in": list_time},
+                "spatialDimension":  {"$in": list_spatial}
+            }
+        else:
+            query = {
+                "featureDimension": {"$in": list_feature},
+                "viewpointDimension": {"$in": list_viewpoint},
+                "timeDimension": {"$in": list_time},
+                "spatialDimension":  {"$in": list_spatial}
+            }
 
         result_scene = ThreeDSIMBase.mongodb_client.search_documents("3DSceneFact", query)
         return result_scene
@@ -67,12 +74,8 @@ class Query(ThreeDSIMBase):
         if not pro_id:
             raise ValueError("product list is none.")
         
-
-
-        filtered_pro_id = [item for item in pro_id if item.startswith('2')]
         
         query = {
-            "productDimension": {"$in": filtered_pro_id},
             "featureDimension": {"$in": list_feature},
             "viewpointDimension": {"$in": list_viewpoint},
             "timeDimension": {"$in": list_time},

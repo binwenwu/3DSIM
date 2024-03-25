@@ -12,6 +12,7 @@ from mongodb_operations.mongo_template import template_scene_asset, template_ass
 from mongodb_operations.mongodb import MongoDB
 from data_operations.query import Query
 from data_operations.remove import Remove
+from data_operations.update import Update
 
 from .base.tileset import TileSet
 from .base.asset import Asset
@@ -54,7 +55,7 @@ class Parser3DTiles(ThreeDSIMBase):
         prefix = self._tileset.root_uri.as_posix().replace("/home/program/3dsim/data/","/public/")
         ThreeDSIMBase.minio_client.upload_folder(folder_path=self._tileset.root_uri, prefix=prefix)
         # Parse data information into a database
-        self._convert_tileset_to_fact(self._tileset.root_tile) # We force the root Tile to be a Scene
+        self._convert_3dtiles_to_fact(self._tileset.root_tile) # We force the root Tile to be a Scene
         print("## the 3d tile inserted")
 
 
@@ -62,7 +63,7 @@ class Parser3DTiles(ThreeDSIMBase):
     '''
     convert tileset to a fact
     '''
-    def _convert_tileset_to_fact(self, asset:Tile) -> dict:
+    def _convert_3dtiles_to_fact(self, asset:Tile) -> dict:
         sceneAsset  = template_scene_asset.copy()
         identifier = {
             "_id": self._tileset.extras['3dsim_id']
@@ -431,8 +432,6 @@ class Parser3DTiles(ThreeDSIMBase):
 
     
     
-
-
     '''
     check the key in the dict
     '''
@@ -448,4 +447,81 @@ class Parser3DTiles(ThreeDSIMBase):
                 if self._check_dict_field(item, key):
                     return True
         return False
+
+
+    '''
+    classify the edges by type
+    1: scene 2 scene
+    2: scene 2 model
+    '''
+    def _classify_edges_by_type(self, edges: list[dict]):
+        scene_edges = []
+        model_edges = []
+        for edge in edges:
+            if edge["type"] == 1:
+                scene_edges.append(edge)
+            elif edge["type"] == 2:
+                model_edges.append(edge)
+            else:
+                # Handle other types if needed
+                pass
+
+        return scene_edges, model_edges
+    
+
+    '''
+    remove scene asset
+    '''
+    def remove_scene(self, scene_id:ObjectId, query:Query, remove:Remove) -> None:
+        edges = query.query_edges_of_scene(scene_id) # Query child nodes
+        edge_scene, edge_model = self._classify_edges_by_type(edges) # Classification of child node types
+
+        for child_scene in edge_scene:
+                self.remove_scene(child_scene['toID'],query,remove)
+        
+        for child_model in edge_model:
+                remove.remove_model_byID(child_model['toID'])
+        
+        remove.remove_scene_byID(scene_id)
+
+        for child_edge in edges:
+            remove.remove_edges_of_scene(scene_id)
+
+    '''
+    remove model asset
+    '''
+    def remove_model(self, model_id:ObjectId, remove:Remove) -> None:
+        remove.remove_model_byID(model_id)
+
+    
+    '''
+    update scene asset
+    '''
+    def update_scene(self, scene_id:ObjectId, update_data:dict, update:Update):
+        update.update_sceneAsset(scene_id,update_data)
+
+    
+    '''
+    update model asset
+    '''
+    def update_model(self, model_id:ObjectId, update_data:dict, update:Update):
+        update.update_modelAsset(model_id,update_data)
+
+    '''
+    query scene asset
+    '''
+    def query_scene(self, product: list[str], spatialExtent: list[float],
+                        timeSpan: list[str], feature: list[str], viewedRange: list[float],isRoot:bool,query:Query) -> list:
+        return query.query_sceneAsset(product=product, spatialExtent=spatialExtent, timeSpan=timeSpan, feature=feature, viewedRange=viewedRange,isRoot=isRoot)
+
+    '''
+    query model asset
+    '''
+    def query_model(self, product: list[str], spatialExtent: list[float],
+                        timeSpan: list[str], feature: list[str], viewedRange: list[float],query:Query) -> list:
+        return query.query_modelAsset(product, spatialExtent, timeSpan, feature, viewedRange)
+
+
+    
+
     

@@ -10,7 +10,7 @@ class Remove(ThreeDSIMBase):
     def __init__(self):
         self.query = Query()
     
-    def remove_rootSceneAsset(self, product: list[str]=['3DTiles','CityGML','OSG', 'I3S'], 
+    def remove_sceneAsset(self, product: list[str]=['3DTiles','CityGML','OSG', 'I3S'], 
                             spatialExtent: list[float] = [-180, -90, 180, 90],
                             timeSpan: list[str] = ['19000101', '20990101'], 
                             feature: list[str] = ['Building'], viewedRange: list[float] = [0,9999999]):
@@ -35,11 +35,8 @@ class Remove(ThreeDSIMBase):
         if not pro_id:
             raise ValueError("product list is none.")
         
-        # Filter out product numbers belonging to sceneAsset
-        filtered_pro_id = [item for item in pro_id if item.startswith('1')]
         
         query = {
-            "productDimension": {"$in": filtered_pro_id},
             "featureDimension": {"$in": list_feature},
             "viewpointDimension": {"$in": list_viewpoint},
             "timeDimension": {"$in": list_time},
