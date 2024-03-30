@@ -2,7 +2,7 @@ import os
 from base.base_3dsim import ThreeDSIMBase
 from mongodb_operations.mongo_template import template_model_asset_pointcloud
 from .base.Transform import Transform
-from .base.type import ModelAsset, PointCloudType
+from .base.type import PointCloudType
 import laspy
 from .base.bounding_volume import BoundingVolume
 import numpy as np

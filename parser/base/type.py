@@ -12,17 +12,17 @@ class RangeMode(Enum):
     GEOMETRIC_ERROR = "GE"
 
 
-class SceneAsset(Enum):
-    CITYGML = "CITYGML"
-    _3DTILES = "_3DTILES"
-    OSG = "OSG"
-    I3S = "I3S"
+# class SceneAsset(Enum):
+#     CITYGML = "CITYGML"
+#     _3DTILES = "_3DTILES"
+#     OSG = "OSG"
+#     I3S = "I3S"
 
-class ModelAsset(Enum):
-    POINTCLOUD = "POINTCLOUD"
-    PHYSICALFIELD  = "PHYSICALFIELD"
-    RASTERRELIEF = "RASTERRELIEF"
-    MESH = "3DMESH"
+# class ModelAsset(Enum):
+#     POINTCLOUD = "POINTCLOUD"
+#     PHYSICALFIELD  = "PHYSICALFIELD"
+#     RASTERRELIEF = "RASTERRELIEF"
+#     MESH = "3DMESH"
 
 class ReliefType(Enum):
     GEOTIFF = "GEOTIFF"
@@ -42,4 +42,7 @@ class Mesh3DType(Enum):
     GLTF = "GLTF"
     GLB = "GLB"
     FBX = "FBX"
+
+
+
 

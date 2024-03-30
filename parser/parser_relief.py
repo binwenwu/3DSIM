@@ -8,7 +8,7 @@ import math
 
 from .base.bounding_volume import BoundingVolume
 from .base.Transform import Transform
-from .base.type import ModelAsset, ReliefType
+from .base.type import ReliefType
 from tools.render_range_convert import RangeMode, RangeConverter
 
 from base.base_3dsim import ThreeDSIMBase
@@ -19,6 +19,8 @@ from mongodb_operations.mongodb import MongoDB
 from tools.utils import generate_short_hash
 from minio_operations.minio import get_endpoint_minio
 from osgeo import gdal
+
+
 
 
 def reproject_tif(src_path, dst_path, dst_crs='EPSG:4326'):
