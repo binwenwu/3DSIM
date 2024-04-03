@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'corsheaders',  # 解决跨域CORS
     "api.common",
     "api._3dtiles",
     "api._3dmesh",
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    'corsheaders.middleware.CorsMiddleware',  # 最外层的中间件
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -128,3 +130,40 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+
+CORS_ORIGIN_WHITELIST = (
+    'http://127.0.0.1:3003',
+    'http://localhost:3003',
+    'https://127.0.0.1:3003',
+    'https://localhost:3003',
+)
+
+CORS_ALLOW_CREDENTIALS = True  # 跨域时允许携带cookie
+CORS_ORIGIN_ALLOW_ALL = True # 设置为 True 意味着接受任意跨域请求,这是非常危险的行为,上线时一定要设置为 False。CORS_ORIGIN_ALLOW_ALL = True,那么 CORS_ORIGIN_WHITELIST 和 CORS_ALLOW_METHODS 等其他CORS相关配置将不再起作用。
+
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+    'VIEW',
+)
+
+CORS_ALLOW_HEADERS = (
+    'www-authorization',
+    'XMLHttpRequest',
+    'X_FILENAME',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'Pragma',
+)

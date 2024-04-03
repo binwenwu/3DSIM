@@ -39,8 +39,8 @@ class PhysicalFieldType(Enum):
     HDF = "HDF"
 
 class Mesh3DType(Enum):
-    GLTF = "GLTF"
-    GLB = "GLB"
+    PLY = "PLY"
+    OBJ = "OBJ"
     FBX = "FBX"
 
 
