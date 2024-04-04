@@ -117,11 +117,41 @@ class Remove(ThreeDSIMBase):
         Remove the scene based on its ID.
         :param scene_id: _id of the scene to be deleted
         """
+        edges = self.query.query_edges_of_scene(scene_id) # Query child nodes
+        edge_scene, edge_model = self._classify_edges_by_type(edges) # Classification of child node types
+        for child_scene in edge_scene:
+            self.remove_scene_byID(child_scene['toID'])
+        
+        for child_model in edge_model:
+            self.remove_model_byID(child_model['toID'])
+        
+        for child_edge in edges:
+            self.remove_edges_of_scene(scene_id)
+            
         query = {
             "_id": scene_id
         }
         ThreeDSIMBase.mongodb_client.remove_documents("3DSceneFact", query)
 
+
+    '''
+    classify the edges by type
+    1: scene 2 scene
+    2: scene 2 model
+    '''
+    def _classify_edges_by_type(self, edges: list[dict]):
+        scene_edges = []
+        model_edges = []
+        for edge in edges:
+            if edge["type"] == 1:
+                scene_edges.append(edge)
+            elif edge["type"] == 2:
+                model_edges.append(edge)
+            else:
+                # Handle other types if needed
+                pass
+
+        return scene_edges, model_edges
 
 
 

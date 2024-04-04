@@ -415,7 +415,7 @@ class Parser3DTiles(ThreeDSIMBase):
     '''
     def _compute_genericname(self, adeOfMetadata : dict, isRoot: bool = False)->dict:
         genericName=''
-        parent_folder = os.path.basename(os.path.dirname(self._tileset.root_uri))
+        parent_folder = os.path.basename(self._tileset.root_uri)
         if isRoot:
             genericName = parent_folder+"_"+self._featureType #order: filePath -> name in metadata
             if self._check_dict_field(adeOfMetadata, 'feature'):
@@ -424,7 +424,7 @@ class Parser3DTiles(ThreeDSIMBase):
                 "genericName": genericName
             }
         else:
-            genericName = parent_folder+"_"+self._featureType + '_part'
+            genericName = parent_folder+"_" + self._featureType + '_part'
             return {
                 "genericName": genericName
             }
@@ -468,58 +468,6 @@ class Parser3DTiles(ThreeDSIMBase):
 
         return scene_edges, model_edges
     
-
-    '''
-    remove scene asset
-    '''
-    def remove_scene(self, scene_id:ObjectId, query:Query, remove:Remove) -> None:
-        edges = query.query_edges_of_scene(scene_id) # Query child nodes
-        edge_scene, edge_model = self._classify_edges_by_type(edges) # Classification of child node types
-
-        for child_scene in edge_scene:
-                self.remove_scene(child_scene['toID'],query,remove)
-        
-        for child_model in edge_model:
-                remove.remove_model_byID(child_model['toID'])
-        
-        remove.remove_scene_byID(scene_id)
-
-        for child_edge in edges:
-            remove.remove_edges_of_scene(scene_id)
-
-    '''
-    remove model asset
-    '''
-    def remove_model(self, model_id:ObjectId, remove:Remove) -> None:
-        remove.remove_model_byID(model_id)
-
-    
-    '''
-    update scene asset
-    '''
-    def update_scene(self, scene_id:ObjectId, update_data:dict, update:Update):
-        update.update_sceneAsset(scene_id,update_data)
-
-    
-    '''
-    update model asset
-    '''
-    def update_model(self, model_id:ObjectId, update_data:dict, update:Update):
-        update.update_modelAsset(model_id,update_data)
-
-    '''
-    query scene asset
-    '''
-    def query_scene(self, product: list[str], spatialExtent: list[float],
-                        timeSpan: list[str], feature: list[str], viewedRange: list[float],isRoot:bool,query:Query) -> list:
-        return query.query_sceneAsset(product=product, spatialExtent=spatialExtent, timeSpan=timeSpan, feature=feature, viewedRange=viewedRange,isRoot=isRoot)
-
-    '''
-    query model asset
-    '''
-    def query_model(self, product: list[str], spatialExtent: list[float],
-                        timeSpan: list[str], feature: list[str], viewedRange: list[float],query:Query) -> list:
-        return query.query_modelAsset(product, spatialExtent, timeSpan, feature, viewedRange)
 
 
     

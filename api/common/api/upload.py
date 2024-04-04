@@ -36,7 +36,7 @@ def parse_and_store_data(filename,dimension):
     product = dimension['product']
     validFrom = format_date(dimension['validFrom'])
     validTo = format_date(dimension['validTo'])
-    viewPoint = dimension['viewPoint']
+    viewedRange = dimension['viewedRange']
     lon = dimension['lon']
     lat = dimension['lat']
     mimeType = dimension['mimeType']
@@ -48,7 +48,6 @@ def parse_and_store_data(filename,dimension):
         p3d.add_data(path,featureType=feature,createTime=createTime, validTime=[validFrom, validTo])
     elif product == 'RasterRelief':
         path = f'/home/program/3dsim/data/temp/{filename}'
-        pass
         pr = ParserRelief()
         pr.add_data(mimeType = mimeType, path = path,createTime=createTime, validTime=[validFrom, validTo])
     elif product == 'PhysicalField':
