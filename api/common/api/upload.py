@@ -17,7 +17,7 @@ def upload(request):
     if request.method == 'POST' and request.FILES.get('file'):
         uploaded_file = request.FILES['file']
         # 1. Extract the uploaded file to a folder
-        extract_compressed_file(uploaded_file,'/home/program/3dsim/temp/')
+        extract_compressed_file(uploaded_file,'/home/program/3dsim/data/temp/')
         # 2. Obtain dimension information
         dimension = json.loads(request.POST.get('dimension'))
         # 3. Data parsing and storage and warehousing
@@ -43,20 +43,20 @@ def parse_and_store_data(filename,dimension):
     createTime = datetime.now().strftime('%Y%m%d')
     # 2. storage and warehousing
     if product == '3DTiles':
-        path = f'/home/program/3dsim/temp/{filename}/tileset.json'
+        path = f'/home/program/3dsim/data/temp/{filename}/tileset.json'
         p3d = Parser3DTiles()
         p3d.add_data(path,featureType=feature,createTime=createTime, validTime=[validFrom, validTo])
     elif product == 'RasterRelief':
-        path = f'/home/program/3dsim/temp/{filename}'
+        path = f'/home/program/3dsim/data/temp/{filename}'
         pass
         pr = ParserRelief()
         pr.add_data(mimeType = mimeType, path = path,createTime=createTime, validTime=[validFrom, validTo])
     elif product == 'PhysicalField':
-        path = f'/home/program/3dsim/temp/{filename}'
+        path = f'/home/program/3dsim/data/temp/{filename}'
         ppf = ParserPhysicalField()
         ppf.add_data(mimeType = mimeType, path = path,createTime=createTime, validTime=[validFrom, validTo])
     elif product == 'PointCloud':
-        path = f'/home/program/3dsim/temp/{filename}'
+        path = f'/home/program/3dsim/data/temp/{filename}'
         ppc = ParserPointcloud()
         ppc.add_data(mimeType = mimeType, path = path,createTime=createTime, validTime=[validFrom, validTo])
     

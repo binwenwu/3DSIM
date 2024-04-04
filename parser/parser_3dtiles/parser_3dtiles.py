@@ -52,7 +52,7 @@ class Parser3DTiles(ThreeDSIMBase):
         with tileset_3dsim_path.open("w") as f:
             f.write(json.dumps(_tileset_dict, separators=(",", ":"), indent=2, ensure_ascii=False))
         # Upload data to MinIO
-        prefix = self._tileset.root_uri.as_posix().replace("/home/program/3dsim/data/","/public/")
+        prefix = "public/3dtiles/" + os.path.basename(self._tileset.root_uri) 
         ThreeDSIMBase.minio_client.upload_folder(folder_path=self._tileset.root_uri, prefix=prefix)
         # Parse data information into a database
         self._convert_3dtiles_to_fact(self._tileset.root_tile) # We force the root Tile to be a Scene
