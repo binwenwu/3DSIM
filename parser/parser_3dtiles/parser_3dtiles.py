@@ -361,9 +361,10 @@ class Parser3DTiles(ThreeDSIMBase):
     compute the instance atrribute
     '''    
     def _compute_instance_value_for_model(self,asset: Content)->dict:
-        suffix = asset.content_uri.suffix
+        prefix, suffix = os.path.splitext(asset.content_uri)
+
         tile_url = os.path.abspath(os.path.join(self._tileset.root_uri, asset.content_uri))
-        object_name = tile_url.replace("/home/program/3dsim/data/", "/public/")
+        object_name = "/home/public/3dtiles/" + os.path.basename(self._tileset.root_uri) + "/" +str(asset.content_uri)
         return {
             "instance": {
                 "filePath": object_name,

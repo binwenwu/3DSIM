@@ -19,23 +19,23 @@ NaturalGeographicFeatures:
       FeatureName: PhysicalField      
 ArtificialGeographicFeatures:
   - AgriculturalArea:
-      FeatureClass: 150000
+      FeatureClass: 210000
       FeatureName: AgriculturalArea
   - WaterFacility:
-      FeatureClass: 210000
+      FeatureClass: 220000
       FeatureName: WaterFacility
   - TransportationFacility:
-      FeatureClass: 220000
+      FeatureClass: 230000
       FeatureName: TransportationFacility
   - Building:
-      FeatureClass: 230000
+      FeatureClass: 240000
       FeatureName: Building
   - Pipeline:
-      FeatureClass: 240000
+      FeatureClass: 250000
       FeatureName: Pipeline
   - Courtyard:
-      FeatureClass: 250000
+      FeatureClass: 260000
       FeatureName: Courtyard
   - ArtificialLandform:
-      FeatureClass: 260000
+      FeatureClass: 270000
       FeatureName: ArtificialLandform

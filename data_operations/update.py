@@ -10,7 +10,7 @@ class Update(ThreeDSIMBase):
     def __init__(self):
         self.query = Query()
 
-    def update_sceneAsset(self, scene_id: ObjectId, update_data: dict):
+    def update_sceneAsset(self, scene_id, update_data: dict):
         """
         Update root scene assets based on specified criteria.
         :param scene_id: _id of the scene to be updated
@@ -46,7 +46,7 @@ class Update(ThreeDSIMBase):
         query = {
             "_id": model_id
         }
-
+        
         ThreeDSIMBase.mongodb_client.update_document("3DModelFact", query, update_data)
 
 
