@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'drf_yasg',
     'corsheaders',  # 解决跨域CORS
     "api.common",
     "api._3dtiles",

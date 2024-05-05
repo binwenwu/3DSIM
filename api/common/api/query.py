@@ -4,12 +4,13 @@ from django.views.decorators.csrf import csrf_exempt
 from data_operations.query import Query
 
 
-Query = Query()
 
+Query = Query()
 
 @csrf_exempt
 def query(request):
     if request.method == "POST":
+        print("Query API")
         queryParams = json.loads(request.body)
         feature = queryParams["feature"]
         product = queryParams["product"]
