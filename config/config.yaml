@@ -19,15 +19,15 @@ postgresql:
   database: 3dsim
   user: postgres
   password: wbw876653771@@
-  host: 10.211.55.6
+  host: 10.101.240.60
   port: 31074
 mongodb:
   database: 3dsim
-  host: 10.211.55.6
+  host: 10.101.240.60
   port: 27017
   username: admin
   password: wbw876653771@@
 minio:
-  endpoint: 10.211.55.6:9000
+  endpoint: 10.101.240.60:9000
   access_key: admin
   secret_key: wbw876653771@@
