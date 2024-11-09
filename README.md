@@ -49,7 +49,7 @@ pip install netCDF4
 
 # Usage
 
-## query 3d asset
+## Query 3d asset
 
 1. query model assets
 
@@ -66,7 +66,7 @@ result = query.query_modelAsset(
 2. query 3d root scene assets
 
 ```python
-from query import Query
+from data_operations.query import Query
 query  = Query()
 result = query.query_rootSceneAsset(
          product = ['3DTiles','CityGML','OSG', 'I3S'], 
@@ -79,7 +79,7 @@ result = query.query_rootSceneAsset(
 3. query scene assets: 3dtiles
 
 ```python
-from query import Query
+from data_operations.query import Query
 query  = Query()
 result = query.query_rootSceneAsset(
          product = ['3DTiles'], 
@@ -90,4 +90,37 @@ result = query.query_rootSceneAsset(
          isRoot=True)
 p3d = Parser3DTiles()
 p3d.save_data_to3dtiles(sceneAsset=results[0], path='./tileset.json',query=query)
+```
+
+## Update 3d asset
+
+```python
+from data_operations.update import Update
+update = Update()
+
+_update_data = {
+    "genericName": "建筑物"
+}
+update_result = update.update_sceneAsset(scene_id = "661df498f6ee71ecd5707771",update_data=_update_data)
+```
+
+## Remove 3d asset
+
+```python
+from data_operations.remove import Remove
+remove = Remove()
+query = Query()
+
+# First, query a batch of data
+results = query.query_sceneAsset(product=['3DTiles','CityGML','OSG', 'I3S'], 
+                             spatialExtent = [-180, -90, 180, 90],
+                             timeSpan=['19000101', '20990101'], 
+                             feature= ['Building'], viewedRange= [0,9999999],isRoot=True)
+
+print("size of root scene: ", len(results))
+
+# Delete based on asset ID
+for result in results:
+    print(result['_id'])
+    remove.remove_scene_byID(scene_id=result['_id'])
 ```
