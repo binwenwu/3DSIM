@@ -10,3 +10,4 @@ rasterio
 laspy
 laspy[lazrs,laszip]
 netCDF4
+py3dtiles
