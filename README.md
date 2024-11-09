@@ -101,7 +101,9 @@ update = Update()
 _update_data = {
     "genericName": "建筑物"
 }
-update_result = update.update_sceneAsset(scene_id = "661df498f6ee71ecd5707771",update_data=_update_data)
+update_result = update.update_sceneAsset(
+    scene_id = "661df498f6ee71ecd5707771",
+    update_data=_update_data)
 ```
 
 ## Remove 3d asset
